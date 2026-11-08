@@ -1,10 +1,22 @@
-/* Minimal QR Code encoder (byte mode, error correction L, versions 1-10).
-   Written for Language German; no dependencies. Exposes LGQR.matrix(text). */
+/* Minimal QR Code encoder (byte mode, error correction L/M/Q/H, versions 1-25).
+   Written for Languway German; no dependencies. Exposes LGQR.matrix(text). */
 (function (root) {
   'use strict';
-  // error-correction codewords per block and number of blocks, ECC level L, versions 1..10
-  var ECC_PER_BLOCK = [7, 10, 15, 20, 26, 18, 20, 24, 30, 18];
-  var NUM_BLOCKS = [1, 1, 1, 1, 1, 2, 2, 2, 2, 4];
+  // Nayuki-style tables, versions 1..25. Level order: L, M, Q, H (format-bit indicators 1, 0, 3, 2)
+  var ECC = {
+    L: [7,10,15,20,26,18,20,24,30,18,20,24,26,30,22,24,28,30,28,28,28,28,30,30,26],
+    M: [10,16,26,18,24,16,18,22,22,26,30,22,22,24,24,28,28,26,26,26,26,28,28,28,28],
+    Q: [13,22,18,26,18,24,18,22,20,24,28,26,24,20,30,24,28,28,26,30,28,30,30,30,30],
+    H: [17,28,22,16,22,28,26,26,24,28,24,28,22,24,24,30,28,28,26,28,30,24,30,30,30]
+  };
+  var BLK = {
+    L: [1,1,1,1,1,2,2,2,2,4,4,4,4,4,6,6,6,6,7,8,8,9,9,10,12],
+    M: [1,1,1,2,2,4,4,4,5,5,5,8,9,9,10,10,11,13,14,16,17,17,18,20,21],
+    Q: [1,1,2,2,4,4,6,6,8,8,8,10,12,16,12,17,16,18,21,20,23,23,25,27,29],
+    H: [1,1,2,4,4,4,5,6,8,8,11,11,16,16,18,16,19,21,25,25,25,34,30,32,35]
+  };
+  var FMT = { L: 1, M: 0, Q: 3, H: 2 };
+  var ECC_PER_BLOCK, NUM_BLOCKS, FMTBITS = 1, MAXV = 25;
 
   function rawModules(ver) {
     var r = (16 * ver + 128) * ver + 64;
@@ -46,16 +58,17 @@
     return out;
   }
 
-  function encode(text) {
-    var bytes = utf8(text), ver, cap;
-    for (ver = 1; ver <= 10; ver++) {
-      var ccBits = 8;
+  function encode(text, lvl) {
+    lvl = lvl || 'L'; ECC_PER_BLOCK = ECC[lvl]; NUM_BLOCKS = BLK[lvl]; FMTBITS = FMT[lvl];
+    var bytes = utf8(text), ver, cap, ccBits;
+    for (ver = 1; ver <= MAXV; ver++) {
+      ccBits = ver < 10 ? 8 : 16;
       if (4 + ccBits + bytes.length * 8 <= dataCodewords(ver) * 8) break;
     }
-    if (ver > 10) throw new Error('QR: text too long');
+    if (ver > MAXV) throw new Error('QR: text too long');
     var bits = [];
     function put(val, len) { for (var i = len - 1; i >= 0; i--) bits.push((val >>> i) & 1); }
-    put(4, 4); put(bytes.length, 8);
+    put(4, 4); put(bytes.length, ccBits);
     bytes.forEach(function (b) { put(b, 8); });
     cap = dataCodewords(ver) * 8;
     put(0, Math.min(4, cap - bits.length));
@@ -107,7 +120,7 @@
       });
     });
     function formatBits(mask) {
-      var d = (1 << 3) | mask, rem = d, k;           // ECC level L = 01
+      var d = (FMTBITS << 3) | mask, rem = d, k;
       for (k = 0; k < 10; k++) rem = (rem << 1) ^ ((rem >>> 9) * 0x537);
       var bits = ((d << 10) | rem) ^ 0x5412;
       function b(n) { return ((bits >>> n) & 1) !== 0; }
@@ -195,6 +208,34 @@
       ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = '#0d3b2a';
       for (var y = 0; y < n; y++) for (var x = 0; x < n; x++) if (mat[y][x]) ctx.fillRect((x + q) * px, (y + q) * px, px, px);
+    },
+    /* rounded green QR with a round logo in the middle (uses error correction H) */
+    drawStyled: function (canvas, text, size, logo) {
+      var mat = encode(text, 'H'), n = mat.length, q = 3, tot = n + q * 2, cell = size / tot, ctx;
+      canvas.width = canvas.height = size; ctx = canvas.getContext('2d');
+      function rr(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+      ctx.clearRect(0, 0, size, size);
+      rr(1.5, 1.5, size - 3, size - 3, size * 0.09); ctx.fillStyle = '#ffffff'; ctx.fill(); ctx.lineWidth = Math.max(2, size * 0.008); ctx.strokeStyle = '#B7E4CC'; ctx.stroke();
+      var g = ctx.createLinearGradient(0, 0, size, size); g.addColorStop(0, '#16865B'); g.addColorStop(1, '#0D6042');
+      var c = tot / 2, rad = n * 0.125 + 0.4;
+      function inFinder(x, y) { return (x < 8 && y < 8) || (x >= n - 8 && y < 8) || (x < 8 && y >= n - 8); }
+      ctx.fillStyle = g;
+      for (var y = 0; y < n; y++) for (var x = 0; x < n; x++) {
+        if (!mat[y][x] || inFinder(x, y)) continue;
+        var dx = x + q + 0.5 - c, dy = y + q + 0.5 - c; if (dx * dx + dy * dy < (rad + 0.9) * (rad + 0.9)) continue;
+        rr((x + q) * cell + cell * 0.02, (y + q) * cell + cell * 0.02, cell * 0.96, cell * 0.96, cell * 0.34); ctx.fill();
+      }
+      [[0, 0], [n - 7, 0], [0, n - 7]].forEach(function (p) {
+        var X = (p[0] + q) * cell, Y = (p[1] + q) * cell;
+        ctx.fillStyle = g; rr(X, Y, 7 * cell, 7 * cell, cell * 2.2); ctx.fill();
+        ctx.fillStyle = '#fff'; rr(X + cell, Y + cell, 5 * cell, 5 * cell, cell * 1.5); ctx.fill();
+        ctx.fillStyle = g; rr(X + 2 * cell, Y + 2 * cell, 3 * cell, 3 * cell, cell * 1.0); ctx.fill();
+      });
+      var cx = size / 2, R = rad * cell;
+      ctx.beginPath(); ctx.arc(cx, cx, R + cell * 0.5, 0, 7); ctx.fillStyle = g; ctx.fill();
+      ctx.beginPath(); ctx.arc(cx, cx, R, 0, 7); ctx.fillStyle = '#fff'; ctx.fill();
+      if (logo && logo.width) { ctx.save(); ctx.beginPath(); ctx.arc(cx, cx, R - cell * 0.35, 0, 7); ctx.clip(); var L = (R - cell * 0.35) * 2 * 0.92; ctx.drawImage(logo, cx - L / 2, cx - L / 2, L, L); ctx.restore(); }
+      return canvas;
     },
     svg: function (text, px) {
       var mat = encode(text), n = mat.length, q = 4, d = '';

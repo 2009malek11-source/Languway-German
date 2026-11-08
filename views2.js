@@ -1,4 +1,4 @@
-/* Language German – views part 2: quiz engine, speaking practice, level tests, exams, placement test */
+/* Languway German – views part 2: quiz engine, speaking practice, level tests, exams, placement test */
 (function () {
   'use strict';
   var LG = window.LG, C = LG.C, D = LG.D, P = LG.P, esc = LG.esc, ic = LG.ic;
@@ -151,7 +151,7 @@
   };
   function intro() {
     var box = LG.$('#pbox');
-    box.innerHTML = '<div class="qbox result"><h2>Willkommen, ' + esc(LG.S.user.name.split(' ')[0]) + '!</h2><p>Bevor du startest, finden wir dein Niveau heraus. Der Test hat <b>30 Fragen</b> zu Wortschatz, Grammatik, Lesen, Hören, Satzbau und Schreiben – von leicht bis schwer.</p><p class="muted">Wähle „Weiß nicht“, wenn du eine Antwort nicht kennst. Ohne Vorkenntnisse beginnst du bei Stufe 1 (Pre-A1) mit Buchstaben und Zahlen. Für die Hörfragen brauchst du den Ton.</p><button class="btn" id="go">Test starten</button></div>';
+    box.innerHTML = '<div class="qbox result"><h2>Einstufungstest</h2><p><b>30 Fragen</b> zeigen dir, wo du anfängst. Weißt du etwas nicht, wähle „Weiß nicht“. Ohne Vorkenntnisse startest du bei Stufe 1 mit Buchstaben und Zahlen. Schalte den Ton für die Hörfragen ein.</p><button class="btn" id="go">Test starten</button></div>';
     LG.$('#go', box).onclick = function () {
       var qs = D.PLACEMENT.map(function (q) { return C.prepareQ(q); });
       LG.quiz({ root: box, qs: qs, feedback: false, skip: true, title: 'Einstufungstest', finish: function (res) { result(qs, res.answers); } });

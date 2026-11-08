@@ -1,4 +1,4 @@
-/* Language German – views part 4: profile, settings, certificate, public certificate check */
+/* Languway German – views part 4: profile, settings, certificate, public certificate check */
 (function () {
   'use strict';
   var LG = window.LG, C = LG.C, D = LG.D, esc = LG.esc, ic = LG.ic;
@@ -19,41 +19,6 @@
   };
 
   /* ---------- settings ---------- */
-  LG.views.settings = function () {
-    var s = LG.settings, u = LG.S.user;
-    return { title: 'Einstellungen', heading: 'Einstellungen', html:
-      '<div class="card"><h3>Darstellung</h3><div class="setrow"><div><b>Tag- und Nachtmodus</b><div class="muted" style="font-size:13px">Wird auf diesem Gerät gespeichert.</div></div><button class="dn" data-act="theme" aria-label="Tag- und Nachtmodus wechseln"><span class="stars"></span><span class="cloud"></span><span class="knob"></span></button></div></div>' +
-      '<div class="card" style="margin-top:16px"><h3>Sprache und Hören</h3>' +
-      '<div class="setrow"><label for="s-rate"><b>Sprechgeschwindigkeit</b><div class="muted" style="font-size:13px" id="s-ratev"></div></label><input type="range" id="s-rate" min="0.5" max="1.2" step="0.05" value="' + s.rate + '"></div>' +
-      '<div class="setrow"><label for="s-voice"><b>Deutsche Stimme</b><div class="muted" style="font-size:13px" id="s-voicen"></div></label><select id="s-voice"></select></div>' +
-      '<div class="setrow"><span></span><button class="btn sm soft" id="s-test">' + ic('speaker') + ' Stimme testen</button></div></div>' +
-      '<div class="card" style="margin-top:16px"><h3>Erinnerungen</h3><div class="setrow"><div><b>Lern-Erinnerungen in der App</b><div class="muted" style="font-size:13px">Beim Öffnen zeigt dir die App, wenn Wörter zur Wiederholung fällig sind oder die nächste Lektion wartet.</div></div><button class="switchbtn' + (s.reminders ? ' on' : '') + '" id="s-rem" role="switch" aria-checked="' + !!s.reminders + '" aria-label="Erinnerungen"></button></div></div>' +
-      '<div class="card" style="margin-top:16px"><h3>KI-Tutor</h3><p class="muted" style="font-size:14px">Der Tutor erklärt Grammatik und Fehler auf Deutsch und Englisch. Er nutzt deinen eigenen Anthropic-API-Schlüssel (console.anthropic.com). Der Schlüssel wird nur auf diesem Gerät gespeichert und nur an api.anthropic.com gesendet – niemals an uns. Ohne Schlüssel gibt es die eingebauten Erklärungen.</p><div class="setrow"><label for="s-key"><b>API-Schlüssel</b></label><input type="password" id="s-key" dir="ltr" placeholder="sk-ant-…" autocomplete="off" value="' + esc(LG.settings.apiKey || '') + '" style="flex:1;min-width:0"></div><div class="setrow"><span class="muted" id="s-keyst" style="font-size:13px"></span><button class="btn sm soft" id="s-keysave">Speichern</button></div></div>' +
-      '<div class="card" style="margin-top:16px"><h3>Sicherung und Gerätewechsel</h3><p class="muted" style="font-size:14px">Dein Konto und dein Fortschritt liegen nur in diesem Browser (kein Server). Lade eine Sicherungsdatei herunter, um sie auf einem anderen Gerät wiederherzustellen oder um Datenverlust (z. B. beim Löschen der Browserdaten) vorzubeugen.</p><div class="row"><button class="btn sm" id="s-bk">Sicherung herunterladen</button><button class="btn sm soft" id="s-bkr">Sicherung einlesen</button><input type="file" id="s-bkf" accept=".json,application/json" hidden></div></div>' +
-      '<div class="card" style="margin-top:16px"><h3>Konto</h3><div class="setrow"><div><b>' + esc(u.name) + '</b><div class="muted" style="font-size:13px">@' + esc(u.username) + '</div></div><button class="btn sm" data-act="logout">Abmelden</button></div>' +
-      '<div class="setrow"><div><b>Passwort ändern</b></div><button class="btn sm soft" data-act="chpw">Ändern</button></div>' +
-      '<div class="setrow"><div><b>Konto löschen</b><div class="muted" style="font-size:13px">Löscht dein Konto und deinen gesamten Fortschritt endgültig. Danach ist keine Anmeldung mehr möglich.</div></div><button class="btn sm danger" data-act="delacc">Löschen</button></div></div>',
-      mount: function (root) {
-        var rate = LG.$('#s-rate', root), rv = LG.$('#s-ratev', root), sel = LG.$('#s-voice', root), vn = LG.$('#s-voicen', root);
-        function lab() { rv.textContent = 'Aktuell: ' + Number(LG.settings.rate).toFixed(2) + '×'; } lab();
-        rate.oninput = function () { LG.setSetting('rate', parseFloat(rate.value)); lab(); };
-        function voices() {
-          var vs = ('speechSynthesis' in window) ? speechSynthesis.getVoices().filter(function (v) { return /^de/i.test(v.lang); }) : [];
-          if (!vs.length) { sel.innerHTML = '<option>Keine deutsche Stimme gefunden</option>'; sel.disabled = true; vn.textContent = 'Dein Gerät bietet keine deutsche Sprachausgabe an. Installiere in den Systemeinstellungen eine deutsche Stimme.'; return; }
-          sel.disabled = false; vn.textContent = vs.length + ' Stimme(n) auf diesem Gerät';
-          sel.innerHTML = '<option value="">Automatisch</option>' + vs.map(function (v) { return '<option value="' + esc(v.name) + '"' + (v.name === LG.settings.voice ? ' selected' : '') + '>' + esc(v.name) + ' (' + esc(v.lang) + ')</option>'; }).join('');
-        }
-        voices(); if ('speechSynthesis' in window) speechSynthesis.onvoiceschanged = voices;
-        sel.onchange = function () { LG.setSetting('voice', sel.value); };
-        LG.$('#s-test', root).onclick = function () { LG.speak('Guten Tag! Ich freue mich, Deutsch zu lernen.', { rate: LG.settings.rate }); };
-        var kst = LG.$('#s-keyst', root); function keyst() { kst.textContent = LG.settings.apiKey ? 'Schlüssel gespeichert (nur auf diesem Gerät).' : 'Kein Schlüssel – eingebaute Erklärungen werden genutzt.'; } keyst();
-        LG.$('#s-keysave', root).onclick = function () { LG.setSetting('apiKey', LG.$('#s-key', root).value.trim()); keyst(); LG.toast('Gespeichert.'); };
-        LG.$('#s-bk', root).onclick = function () { var b = new Blob([LG.exportBackup()], { type: 'application/json' }), a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'language-german-backup-' + LG.S.user.username + '.json'; document.body.appendChild(a); a.click(); a.remove(); LG.toast('Sicherung heruntergeladen.'); };
-        LG.$('#s-bkr', root).onclick = function () { LG.$('#s-bkf', root).click(); };
-        LG.$('#s-bkf', root).onchange = function (ev) { var f = ev.target.files[0]; if (!f) return; var r = new FileReader(); r.onload = function () { try { var u = LG.importBackup(String(r.result)); if (u === LG.S.user.username) { LG.pg = Object.assign(C.emptyProgress(), LG.lsGet('lg.pg.' + u, {})); LG.toast('Sicherung eingelesen.'); LG.route(); } else LG.toast('Sicherung für „' + u + '“ eingelesen. Du kannst dich jetzt mit diesem Konto anmelden.'); } catch (e) { LG.toast('Diese Sicherungsdatei ist ungültig.', true); } }; r.readAsText(f); ev.target.value = ''; };
-        var rem = LG.$('#s-rem', root); rem.onclick = function () { var on = !LG.settings.reminders; LG.setSetting('reminders', on); rem.classList.toggle('on', on); rem.setAttribute('aria-checked', on); LG.toast(on ? 'Erinnerungen sind an.' : 'Erinnerungen sind aus.'); };
-      } };
-  };
   LG.act.logout = function () { LG.confirm('Abmelden?', 'Dein Fortschritt bleibt in diesem Browser gespeichert. Du kannst dich jederzeit mit Benutzername und Passwort wieder anmelden.', 'Abmelden').then(function (ok) { if (ok) LG.logout(); }); };
   LG.act.chpw = function () {
     LG.modal('<h3>Passwort ändern</h3><div class="formerr" id="cp-e" hidden></div><div class="field"><label for="cp-o">Aktuelles Passwort</label><input type="password" id="cp-o" dir="ltr" autocomplete="current-password"></div><div class="field"><label for="cp-n">Neues Passwort</label><input type="password" id="cp-n" dir="ltr" autocomplete="new-password"><small>8 bis 72 Zeichen</small></div><div class="modal__actions"><button class="btn soft" data-r="0">Abbrechen</button><button class="btn" data-r="1">Speichern</button></div>', function (m) {
@@ -78,21 +43,11 @@
   };
 
   /* ---------- certificates (signed, verifiable offline) ---------- */
-  var SEAL_KEY = ['LG', 'DE', 'seal', 'v1', 'Languway'].join('|');
-  function b64u(str) { return btoa(unescape(encodeURIComponent(str))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
-  function unb64u(t) { t = t.replace(/-/g, '+').replace(/_/g, '/'); while (t.length % 4) t += '='; return decodeURIComponent(escape(atob(t))); }
-  function sigOf(payload) { var h = LG.hmac(SEAL_KEY, payload), o = ''; for (var i = 0; i < 12; i++) o += ('0' + h[i].toString(16)).slice(-2); return o; }
-  function certCode(sig) { var s = sig.toUpperCase(); return 'LG-' + s.slice(0, 4) + '-' + s.slice(4, 8) + '-' + s.slice(8, 12); }
-  function token(c) { var p = [c.kind, c.n, c.name, c.score, c.ts].join('~'), sg = sigOf(p); return b64u(p) + '.' + sg; }
-  function parseToken(t) {
-    var i = t.lastIndexOf('.'); if (i < 1) return null;
-    try { var p = unb64u(t.slice(0, i)), f = p.split('~'); if (f.length !== 5 || sigOf(p) !== t.slice(i + 1)) return null; return { kind: f[0], n: +f[1], name: f[2], score: +f[3], ts: +f[4], sig: t.slice(i + 1) }; } catch (e) { return null; }
-  }
-  function verifyUrl(c) { return location.href.split('#')[0] + '#/verify/' + token(c); }
+  function verifyUrl(c) { return location.href.split('#')[0] + '#/verify/' + c.code; }
   function describe(kind, n) {
     if (kind === 'L') { var lv = D.LEVELS[n - 1]; return { head: 'Stufenzertifikat', title: 'Stufe ' + n + ' · ' + lv.t, sub: 'Niveau ' + lv.c }; }
     if (kind === 'S') return { head: 'Niveauzertifikat', title: 'Niveau ' + C.STAGES[n - 1], sub: 'Stufen ' + C.RANGES[n - 1][1] + '–' + C.RANGES[n - 1][2] };
-    return { head: 'Abschlusszertifikat', title: 'Language German · 30 Stufen', sub: 'Pre-A1 bis C2 · Gesamtprüfung bestanden' };
+    return { head: 'Abschlusszertifikat', title: 'Languway German · 30 Stufen', sub: 'Pre-A1 bis C2 · Gesamtprüfung bestanden' };
   }
   function entries() {
     var p = LG.pg, name = LG.S.user.name, out = [], n;
@@ -115,14 +70,14 @@
     }
     x.beginPath(); x.arc(0, 0, R * .72, 0, Math.PI * 2); x.strokeStyle = gold ? '#7a5410' : '#fff'; x.lineWidth = 3; x.stroke();
     x.fillStyle = gold ? '#5b3d06' : '#fff'; x.textAlign = 'center'; x.font = '700 ' + Math.round(R * .2) + 'px Georgia, serif';
-    x.fillText('LANGUAGE', 0, -R * .06); x.fillText('GERMAN', 0, R * .16);
+    x.fillText('LANGUWAY', 0, -R * .06); x.fillText('GERMAN', 0, R * .16);
     var txt = ('★ ZERTIFIZIERT ★ ' + sig.toUpperCase() + ' ').repeat(2), n = txt.length; x.font = '600 ' + Math.round(R * .085) + 'px monospace';
     for (var q = 0; q < n; q++) { var aa = q / n * Math.PI * 2 - Math.PI / 2; x.save(); x.rotate(aa); x.translate(0, -R * .84); x.fillText(txt[q], 0, 0); x.restore(); }
     x.restore();
   }
   function drawCert(c) {
     var W = 1600, H = 1131, cv = document.createElement('canvas'); cv.width = W; cv.height = H; var x = cv.getContext('2d'), d = describe(c.kind, c.n), gold = c.kind === 'F';
-    var sig = sigOf([c.kind, c.n, c.name, c.score, c.ts].join('~'));
+    var sig = LG.sha256hex(c.code).slice(0, 24);
     return loadImg('logo-mark.png').then(function (logo) {
       var F = 'Georgia, "Times New Roman", serif', S = 'system-ui, "Segoe UI", Arial, sans-serif', main = gold ? '#8a6410' : '#16865B', dark = gold ? '#5b3d06' : '#0D6042';
       x.fillStyle = '#fff'; x.fillRect(0, 0, W, H);
@@ -130,7 +85,7 @@
       x.strokeStyle = main; x.lineWidth = 14; x.strokeRect(30, 30, W - 60, H - 60); x.strokeStyle = gold ? '#e8cf86' : '#B7E4CC'; x.lineWidth = 4; x.strokeRect(58, 58, W - 116, H - 116);
       x.textAlign = 'center';
       if (logo) x.drawImage(logo, W / 2 - 50, 95, 100, 100);
-      x.font = '700 28px ' + S; x.fillStyle = main; x.fillText('LANGUAGE GERMAN', W / 2, 232); x.font = '500 19px ' + S; x.fillStyle = '#5a7a6b'; x.fillText('Part of the Languway Series', W / 2, 262);
+      x.font = '700 28px ' + S; x.fillStyle = main; x.fillText('LANGUWAY GERMAN', W / 2, 232); x.font = '500 19px ' + S; x.fillStyle = '#5a7a6b'; x.fillText('Part of the Languway Series', W / 2, 262);
       x.font = '700 70px ' + F; x.fillStyle = dark; x.fillText(d.head, W / 2, 360);
       x.font = '400 26px ' + S; x.fillStyle = '#333'; x.fillText('Herzlichen Glückwunsch und vielen Dank für dein Engagement,', W / 2, 415);
       fit(x, c.name, W - 380, 76, '700', F); x.fillStyle = '#102A20'; x.fillText(c.name, W / 2, 510);
@@ -144,13 +99,13 @@
       var line = c.kind === 'F' ? 'Alle 30 von 30 Stufen geschafft – du hast das Ziel erreicht!' : 'Fortschritt: ' + done + ' von 30 Stufen geschafft · noch ' + left + ' Stufen bis zum Abschlusszertifikat';
       x.fillText(line, W / 2, 812);
       x.textAlign = 'left'; x.font = '400 22px ' + S; x.fillStyle = '#333';
-      x.fillText('Datum: ' + LG.fmtDate(c.ts), 140, 905); x.fillText('Lernzeit insgesamt: ' + LG.hm(LG.pg.minutes), 140, 940);
-      x.font = '700 22px ' + S; x.fillText('Zertifikats-ID: ' + certCode(sig), 140, 975);
-      x.font = '400 16px ' + S; x.fillStyle = '#6b6b6b'; x.fillText('Echtheit prüfen: QR-Code scannen.', 140, 1004);
+      x.fillText('Datum: ' + LG.fmtDate(c.achieved), 140, 905); x.fillText('Lernzeit insgesamt: ' + LG.hm((c.meta && c.meta.minutes) || LG.pg.minutes), 140, 940);
+      x.font = '700 22px ' + S; x.fillText('Zertifikats-ID: ' + c.code, 140, 975);
+      x.font = '400 16px ' + S; x.fillStyle = '#6b6b6b'; x.fillText('Echtheit online prüfen: QR-Code scannen.', 140, 1004);
       seal(x, W / 2 + 10, 932, 92, sig, gold);
-      var qc = document.createElement('canvas'); LGQR.draw(qc, verifyUrl(c), 4, 2); x.drawImage(qc, W - 140 - 170, 800, 170, 170);
+      var qc = document.createElement('canvas'); LGQR.drawStyled(qc, verifyUrl(c), 640, logo); x.drawImage(qc, W - 130 - 215, 775, 215, 215);
       x.textAlign = 'center'; x.font = '400 16px ' + S; x.fillStyle = '#6b6b6b';
-      x.fillText('Teilnahmezertifikat der Lern-App Language German – KEIN offizielles Zertifikat, kein Goethe-, TestDaF- oder telc-Nachweis.', W / 2, 1060);
+      x.fillText('Teilnahmezertifikat der Lern-App Languway German – KEIN offizielles Zertifikat, kein Goethe-, TestDaF- oder telc-Nachweis.', W / 2, 1060);
       return cv;
     });
   }
@@ -167,13 +122,19 @@
     var e = entries().filter(function (x) { return x.code === params[0]; })[0];
     if (!e) { LG.toast('Dieses Zertifikat hast du noch nicht erreicht.', true); return LG.go('/certificates'); }
     return { title: 'Zertifikat', heading: 'Zertifikat', html: '<div class="crumb"><a href="#/certificates">Zertifikate</a> › ' + esc(describe(e.kind, e.n).title) + '</div><div class="card" id="cbox"><p class="muted">Dein Zertifikat wird erstellt …</p></div>',
-      mount: function (root) { var box = LG.$('#cbox', root); drawCert(e).then(function (cv) { show(box, e, cv); }); } };
+      mount: function (root) {
+        var box = LG.$('#cbox', root);
+        LG.getCert(e.kind, e.n).then(function (rec) { return drawCert(rec).then(function (cv) { show(box, rec, cv); }); }).catch(function (er) {
+          box.innerHTML = '<p class="formerr">' + esc(er && er.code === 'network' ? 'Keine Internetverbindung. Zertifikate werden online ausgestellt – bitte versuche es mit Verbindung noch einmal.' : er && er.code === 'not_passed' ? 'Dieses Zertifikat ist noch nicht freigegeben.' : 'Das Zertifikat konnte nicht erstellt werden. Bitte versuche es später noch einmal.') + '</p><button class="btn" id="cretry">Erneut versuchen</button>';
+          LG.$('#cretry', box).onclick = function () { LG.route(); };
+        });
+      } };
   };
   function show(box, c, cv) {
-    var url = verifyUrl(c), sig = sigOf([c.kind, c.n, c.name, c.score, c.ts].join('~'));
-    box.innerHTML = '<div class="cert-wrap"></div><div class="row" style="margin-top:16px;flex-wrap:wrap"><button class="btn" id="c-pdf">PDF herunterladen</button><button class="btn soft" id="c-png">Bild speichern</button><button class="btn soft" id="c-print">Drucken</button><button class="btn soft" id="c-share">Teilen</button></div><p class="note" style="margin-top:14px">Zertifikats-ID: <b>' + esc(certCode(sig)) + '</b>. Die Echtheit prüfst du über den QR-Code oder den Link. Name, Ergebnis und Datum sind durch eine Signatur geschützt: Wird eines davon verändert, schlägt die Prüfung fehl.<br>Teilnahmezertifikat der App Language German – kein Goethe-, TestDaF- oder telc-Zertifikat.</p>';
+    var url = verifyUrl(c);
+    box.innerHTML = '<div class="cert-wrap"></div><div class="row" style="margin-top:16px;flex-wrap:wrap"><button class="btn" id="c-pdf">PDF herunterladen</button><button class="btn soft" id="c-png">Bild speichern</button><button class="btn soft" id="c-print">Drucken</button><button class="btn soft" id="c-share">Teilen</button></div><p class="note" style="margin-top:14px">Zertifikats-ID: <b>' + esc(c.code) + '</b>. Die Echtheit prüft jeder online über den QR-Code oder den Link: Der Code wird in der Datenbank nachgeschlagen und gibt Name, Ergebnis und Datum zurück. Erfundene Codes existieren dort nicht.<br>Teilnahmezertifikat der App Languway German – kein Goethe-, TestDaF- oder telc-Zertifikat.</p>';
     cv.className = 'cert-canvas'; box.querySelector('.cert-wrap').appendChild(cv);
-    var name = 'Language-German-' + c.code;
+    var name = 'Languway-German-' + c.code;
     function dl(blob, fn) { var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fn; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000); }
     box.querySelector('#c-png').onclick = function () { cv.toBlob(function (b) { dl(b, name + '.png'); }, 'image/png'); };
     box.querySelector('#c-pdf').onclick = function () {
@@ -186,22 +147,28 @@
       setTimeout(function () { try { w.focus(); w.print(); } catch (e) {} }, 600);
     };
     box.querySelector('#c-share').onclick = function () {
-      var text = 'Mein Language-German-Zertifikat: ' + url;
+      var text = 'Mein Languway-German-Zertifikat: ' + url;
       function fallback() { if (navigator.clipboard) navigator.clipboard.writeText(url).then(function () { LG.toast('Prüf-Link kopiert.'); }, function () { LG.toast(url); }); else LG.toast(url); }
       if (!navigator.share) return fallback();
       cv.toBlob(function (b) {
-        var f = new File([b], name + '.png', { type: 'image/png' }), data = { title: 'Language German Zertifikat', text: text, url: url };
+        var f = new File([b], name + '.png', { type: 'image/png' }), data = { title: 'Languway German Zertifikat', text: text, url: url };
         if (navigator.canShare && navigator.canShare({ files: [f] })) data = { title: data.title, text: text, files: [f] };
         navigator.share(data).catch(function (e) { if (e && e.name !== 'AbortError') fallback(); });
       });
     };
   }
 
-  /* ---------- public check (works without login and without server) ---------- */
+  /* ---------- public check: the code is looked up in the database (works without login) ---------- */
   LG.views.verify = function (params) {
-    var r = parseToken(params[0]), body;
-    if (!r) body = '<p class="formerr">✘ Ungültig: Der Prüfcode ist beschädigt oder wurde verändert.</p>';
-    else { var d = describe(r.kind, r.n); body = '<p style="color:var(--primary);font-weight:800;font-size:20px">✔ Signatur gültig</p><p>Inhaber:in: <b>' + esc(r.name) + '</b></p><p>' + esc(d.head) + ': ' + esc(d.title) + '</p><p>Ergebnis: <b>' + r.score + ' %</b></p><p>Ausgestellt am: ' + LG.fmtDate(r.ts) + '</p><p dir="ltr" class="muted">' + esc(certCode(r.sig)) + '</p><p class="note">Die Signatur beweist, dass Name, Ergebnis und Datum nicht nachträglich verändert wurden. Teilnahmezertifikat der App Language German – kein Goethe-, TestDaF- oder telc-Zertifikat.</p>'; }
-    return { title: 'Zertifikat prüfen', bare: true, html: '<div class="auth-wrap"><div class="card" style="max-width:520px;margin:auto;text-align:center"><img src="logo-mark.png" alt="" width="80" height="80"><h2>Zertifikat prüfen</h2>' + body + '<a class="btn soft" href="#/" style="margin-top:12px">Zur Startseite</a></div></div>' };
+    var code = String(params[0] || '');
+    return { title: 'Zertifikat prüfen', bare: true, html: '<div class="auth-wrap"><div class="card" style="max-width:520px;margin:auto;text-align:center"><img src="logo-mark.png" alt="" width="80" height="80"><h2>Zertifikat prüfen</h2><div id="vres"><p class="muted">Wird geprüft …</p></div><a class="btn soft" href="#/" style="margin-top:12px">Zur Startseite</a></div></div>',
+      mount: function (root) {
+        var box = LG.$('#vres', root);
+        LG.verifyCert(code).then(function (r) {
+          if (!r || !r.ok) { box.innerHTML = '<p class="formerr">✘ Ungültig: Dieser Zertifikatscode existiert nicht.</p><p class="muted">Prüfe, ob du den Code richtig eingegeben oder den QR-Code vollständig gescannt hast.</p>'; return; }
+          var d = describe(r.kind, r.n);
+          box.innerHTML = '<p style="color:var(--primary);font-weight:800;font-size:20px">✔ Echtes Zertifikat</p><p>Inhaber:in: <b>' + esc(r.name) + '</b></p><p>' + esc(d.head) + ': ' + esc(d.title) + '</p><p>Ergebnis: <b>' + r.score + ' %</b></p><p>Datum: ' + esc(LG.fmtDate(r.achieved)) + '</p><p class="muted">Zertifikats-ID: ' + esc(r.code) + '</p>';
+        }).catch(function () { box.innerHTML = '<p class="formerr">Keine Verbindung zum Prüfdienst. Bitte versuche es später noch einmal.</p>'; });
+      } };
   };
 })();

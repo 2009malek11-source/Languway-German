@@ -1,4 +1,4 @@
-/* Language German – views: landing, dashboard, levels, lessons, tests, translator, wordbook, profile */
+/* Languway German – views: landing, dashboard, levels, lessons, tests, translator, wordbook, profile */
 .card { background: var(--card); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); border: 1px solid var(--line); }
 .card + .card { margin-top: 16px; }
 .card h2, .card h3 { margin-bottom: 8px; }
@@ -50,7 +50,7 @@
 .stagecard { text-align: center; padding: 18px 12px; transition: transform .2s; }
 .stagecard:hover { transform: translateY(-4px); }
 .stagecard b { font-size: 30px; color: var(--primary); display: block; }
-.footer { text-align: center; color: var(--muted); font-size: 14px; padding-top: 30px; border-top: 1px solid var(--line); }
+.footer { text-align: center; color: var(--muted); font-size: 14px; padding: 22px; margin-top: 30px; border-radius: 24px; background: var(--soft); }
 @media (max-width: 760px) { .hero { grid-template-columns: 1fr; } .hero__art { min-height: 240px; order: -1; } }
 
 /* dashboard */
@@ -96,9 +96,9 @@
 .wcard { display: grid; grid-template-columns: 1fr auto; gap: 8px 14px; align-items: start; }
 .wcard h3 { font-size: 22px; margin: 0; }
 .wcard h3 .art { display: inline-block; padding: 1px 9px; border-radius: 9px; font-size: 16px; margin-right: 8px; color: #fff; vertical-align: 2px; }
-.art.der { background: #2a7de1; } .art.die { background: #d6457b; } .art.das { background: #2f9e44; }
+.art.der { background: #2a7de1; } .art.die { background: #dc3545; } .art.das { background: #2f9e44; }
 .wcard .meta { color: var(--muted); font-size: 14px; grid-column: 1 / -1; }
-.wcard .ex { grid-column: 1 / -1; padding: 10px 14px; border-left: 4px solid var(--accent); background: var(--soft); border-radius: 0 12px 12px 0; }
+.wcard .ex { grid-column: 1 / -1; padding: 10px 14px; border-left: 4px solid var(--accent); background: var(--soft); border-radius: 14px; }
 .conj { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 6px; }
 .conj th, .conj td { border: 1px solid var(--line); padding: 5px 9px; text-align: left; }
 .conj th { background: var(--soft); font-size: 13px; }
@@ -208,7 +208,7 @@ input.type:focus { outline: 0; border-color: var(--primary); }
 .empty { text-align: center; padding: 40px 16px; color: var(--muted); }
 .spin { width: 28px; height: 28px; border-radius: 50%; border: 4px solid var(--soft); border-top-color: var(--primary); animation: sp 0.8s linear infinite; margin: 20px auto; }
 @keyframes sp { to { transform: rotate(360deg); } }
-.confetti { position: fixed; top: -10px; width: 10px; height: 14px; z-index: 95; pointer-events: none; animation: fall 2.4s ease-in forwards; }
+.confetti { border-radius: 3px; position: fixed; top: -10px; width: 10px; height: 14px; z-index: 95; pointer-events: none; animation: fall 2.4s ease-in forwards; }
 @keyframes fall { to { transform: translateY(105vh) rotate(720deg); opacity: .9; } }
 input[type=range] { accent-color: var(--primary); }
 .tab, a.tab { text-decoration: none; }
@@ -233,3 +233,30 @@ input[type=range] { accent-color: var(--primary); }
 .certitem { display: flex; gap: 12px; align-items: center; text-decoration: none; color: var(--text); margin-bottom: 10px; } .certitem .ic { width: 40px; height: 40px; border-radius: 12px; background: var(--soft); color: var(--primary); display: grid; place-items: center; }
 .certitem span { display: block; font-size: 13px; }
 .cert-canvas { width: 100%; height: auto; border-radius: 10px; box-shadow: 0 10px 30px -12px rgba(0,0,0,.35); }
+
+/* ---- settings accordion ---- */
+.accs { display: grid; gap: 12px; }
+.acc { background: var(--card); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; box-shadow: var(--shadow, 0 6px 20px -14px rgba(0,0,0,.35)); }
+.acc > summary { list-style: none; display: flex; align-items: center; gap: 14px; padding: 14px 16px; cursor: pointer; user-select: none; }
+.acc > summary::-webkit-details-marker { display: none; }
+.acc__ic { width: 42px; height: 42px; border-radius: 13px; background: var(--soft); color: var(--primary); display: grid; place-items: center; flex: none; }
+.acc__ic .i { width: 22px; height: 22px; }
+.acc__t { flex: 1; min-width: 0; } .acc__t b { display: block; font-size: 16px; } .acc__t small { color: var(--muted); font-size: 13px; }
+.acc__ch { transition: transform .25s; color: var(--muted); display: grid; } .acc__ch .i { width: 20px; height: 20px; }
+.acc[open] > summary { border-bottom: 1px solid var(--line); } .acc[open] .acc__ch { transform: rotate(180deg); }
+.acc__b { padding: 6px 16px 16px; }
+.acc:focus-within { border-color: var(--primary); }
+.how h4 { margin: 14px 0 4px; } .how ol { margin: 0; padding-left: 22px; line-height: 1.6; font-size: 15px; }
+.shareqr { display: grid; place-items: center; margin-top: 8px; } .shareqr canvas { width: min(300px, 80vw); height: auto; border-radius: 28px; box-shadow: 0 12px 30px -14px rgba(13, 96, 66, .55); }
+.row a.btn { text-decoration: none; }
+.setrow input[type=time] { padding: 9px 12px; border-radius: 12px; border: 2px solid var(--line); background: var(--bg); color: var(--text); font: inherit; }
+html.calm *, html.calm *::before, html.calm *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; }
+html.calm .confetti { display: none !important; }
+
+.enhelp { padding: 10px 14px; border-radius: 14px; margin: 10px 0; } .enhelp summary { cursor: pointer; font-weight: 700; color: var(--primary); }
+.ctabs { display: flex; gap: 6px; margin: 8px 0; flex-wrap: wrap; } .ctab { padding: 8px 14px; border-radius: 99px; border: 1px solid var(--line); background: var(--card); color: var(--text); font: 600 14px inherit; cursor: pointer; } .ctab.on { background: var(--primary); color: #fff; border-color: var(--primary); }
+.cpane { display: grid; gap: 6px; } .cpane[hidden] { display: none; }
+.crow { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--card); color: var(--text); font: inherit; cursor: pointer; text-align: left; }
+.crow:hover { border-color: var(--primary); background: var(--soft); } .crow .cp { width: 86px; color: var(--muted); font-size: 14px; } .crow b { flex: 1; font-size: 16px; } .crow .cs { color: var(--primary); display: grid; } .crow .cs .i { width: 18px; height: 18px; }
+
+.lessonbar { margin: 0 2px 14px; } .lessonbar small { color: var(--muted); font-size: 13px; display: block; margin-top: 5px; }

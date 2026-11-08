@@ -1,4 +1,4 @@
-/* Language German – runtime: state, server API, accounts, progress sync, router, audio, helpers */
+/* Languway German – runtime: state, server API, accounts, progress sync, router, audio, helpers */
 (function () {
   'use strict';
   var C = window.LGCore, D = window.LGContent;
@@ -39,6 +39,7 @@
     menu: '<path d="M4 6h16M4 12h16M4 18h16"/>', arrowr: '<path d="M5 12h14M13 6l6 6-6 6"/>',
     swap: '<path d="M7 7h13l-3-3M17 17H4l3 3"/>',
     eye: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+    chevron: '<path d="m6 9 6 6 6-6"/>', sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>', save: '<path d="M5 3h11l3 3v15H5z"/><path d="M8 3v6h8V3M8 21v-7h8v7"/>', info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/>',
     download: '<path d="M12 3v12M7 10l5 5 5-5M4 21h16"/>',
     printer: '<path d="M6 9V3h12v6M6 18H4v-7h16v7h-2"/><path d="M6 14h12v7H6z"/>',
     share: '<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="m8.2 11 7.6-4M8.2 13l7.6 4"/>',
@@ -104,19 +105,8 @@
     var outer = new Uint8Array(96); outer.set(op); outer.set(ih, 64); return sha256(outer);
   };
   LG.randHex = function (n) { var a = new Uint8Array(n); (window.crypto || window.msCrypto).getRandomValues(a); return hex(a); };
-  function hashPw(pw, salt, iter) {
-    iter = iter || 150000;
-    if (window.crypto && crypto.subtle && crypto.subtle.importKey) {
-      return crypto.subtle.importKey('raw', utf8(pw), 'PBKDF2', false, ['deriveBits']).then(function (k) {
-        return crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt: utf8(salt), iterations: iter }, k, 256);
-      }).then(function (bits) { return 'p1:' + hex(new Uint8Array(bits)); });
-    }
-    return new Promise(function (res) { var h = utf8(salt + pw), i; for (i = 0; i < 4000; i++) h = sha256(h); res('s1:' + hex(h)); });
-  }
-  function eq(a, b) { if (a.length !== b.length) return false; var r = 0; for (var i = 0; i < a.length; i++) r |= a.charCodeAt(i) ^ b.charCodeAt(i); return r === 0; }
-
   /* ---------- messages (account screens are in English) ---------- */
-  var MSG = { bad_credentials: 'Incorrect username or password.', username_taken: 'This username is already taken on this device. Choose another one.', invalid_name: 'Please enter your name (up to 60 characters).', invalid_username: 'Username: 3–20 characters, letters a–z, digits, "_", "-" or ".".', invalid_password: 'The password must be 8–72 characters long.', locked: 'Too many wrong attempts. Please wait a minute and try again.', bad_backup: 'This backup file is not valid.', server_error: 'Something went wrong. Please try again.' };
+  var MSG = { bad_credentials: 'Incorrect username or password.', username_taken: 'This username is already taken. Please choose another one.', invalid_name: 'Please enter your name (up to 60 characters).', invalid_username: 'Username: 3–20 characters, letters a–z, digits, "_", "-" or ".".', invalid_password: 'The password must be 8–72 characters long.', locked: 'Too many wrong attempts. Please wait a few minutes and try again.', busy: 'Too many new accounts right now. Please try again later.', network: 'No internet connection. Please check your connection and try again.', session: 'Your session has expired. Please log in again.', server_error: 'Something went wrong. Please try again.' };
   LG.errText = function (code) { return MSG[code] || MSG.server_error; };
 
   /* ---------- progress: local storage (no server) ---------- */
@@ -138,65 +128,85 @@
     r.xp = Math.max(a.xp || 0, b.xp || 0); r.days = union(a.days, b.days).sort().slice(-400);
     return r;
   };
+  /* ---------- Languway German backend (Supabase, isolated schema "german" + RPC functions german_*) ---------- */
+  var API = 'https://fsuwmmtierimmuoxmhrx.supabase.co/rest/v1/rpc/';
+  var ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzdXdtbXRpZXJpbW11b3htaHJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQwNjY1NTEsImV4cCI6MjEwOTY0MjU1MX0.F34AJVyAczSczN0UUFdnY_uyYrDVxLP-S0dNqjhBV-I';
+  function err(code, extra) { var e = { code: code }; if (extra) for (var k in extra) e[k] = extra[k]; return e; }
+  LG.rpc = function (fn, args, keepalive) {
+    var ctl = window.AbortController ? new AbortController() : null, t = ctl && setTimeout(function () { ctl.abort(); }, 20000);
+    return fetch(API + fn, { method: 'POST', keepalive: !!keepalive, signal: ctl ? ctl.signal : undefined, headers: { 'content-type': 'application/json', apikey: ANON, Authorization: 'Bearer ' + ANON }, body: JSON.stringify(args || {}) })
+      .then(function (r) { if (t) clearTimeout(t); if (!r.ok) throw err('server_error'); return r.json(); }, function () { if (t) clearTimeout(t); throw err('network'); });
+  };
+  function ok(r) { if (r && r.ok) return r; throw err((r && r.error) || 'server_error', r && r.wait ? { wait: r.wait } : null); }
   function cacheKey() { return 'lg.pg.' + (LG.S.user ? LG.S.user.username : '_'); }
-  LG.save = function () { LG.pg.rev = Date.now(); lsSet(cacheKey(), LG.pg); LG.setSync('saved'); };
-  LG.push = LG.save;
-  LG.setSync = function (s) { LG.S.sync = s; var el = LG.$('#syncdot'); if (!el) return; el.className = 'tag'; el.textContent = 'Auf diesem Gerät gespeichert'; };
-  function saveSession() { lsSet(KEY.session, { username: LG.S.user.username }); }
+  function token() { var s = lsGet(KEY.session, null); return s && s.token; }
 
-  /* ---------- accounts (stored only in this browser; passwords are salted + hashed) ---------- */
-  function accounts() { return lsGet('lg.accounts', {}); }
-  function setAccounts(a) { lsSet('lg.accounts', a); }
-  function startSession(acc, username) {
-    LG.S.user = { name: acc.name, username: username, created_at: acc.created };
-    LG.pg = Object.assign(C.emptyProgress(), lsGet(cacheKey(), {})); saveSession(); lsSet(KEY.lastUser, username);
+  /* progress: always saved locally at once, pushed to Supabase a moment later (works offline, syncs later) */
+  var dirty = false, pushing = null, timer = 0, lastPull = 0;
+  LG.setSync = function (s) {
+    LG.S.sync = s; var el = LG.$('#syncdot'); if (!el) return; el.className = 'tag' + (s === 'offline' ? ' warn' : '');
+    el.textContent = s === 'saving' ? 'Speichere …' : s === 'offline' ? 'Offline – wird später gesichert' : 'Gespeichert';
+  };
+  LG.save = function () {
+    if (!LG.S.user) return; LG.pg.rev = Date.now(); lsSet(cacheKey(), LG.pg); dirty = true; LG.setSync('saving');
+    clearTimeout(timer); timer = setTimeout(LG.flush, 1500);
+  };
+  LG.push = LG.save;
+  LG.flush = function (keepalive) {
+    clearTimeout(timer); if (!LG.S.user || !token()) return Promise.resolve();
+    if (pushing) return pushing.then(function () { return dirty ? LG.flush(keepalive) : null; });
+    if (!dirty) { LG.setSync('saved'); return Promise.resolve(); }
+    dirty = false;
+    var pre = Date.now() - lastPull > 120000 ? LG.rpc('german_session', { p_token: token() }).then(function (r) { if (r && r.ok) { lastPull = Date.now(); mergeIn(r.progress); } }) : Promise.resolve();
+    pushing = pre.then(function () { return LG.rpc('german_save', { p_token: token(), p_data: LG.pg }, keepalive); }).then(function (r) {
+      if (r && r.error === 'session') { dirty = true; return LG.setSync('offline'); } ok(r); LG.setSync(dirty ? 'saving' : 'saved');
+    }).catch(function () { dirty = true; LG.setSync('offline'); }).then(function () { pushing = null; });
+    return pushing;
+  };
+  function mergeIn(server) {
+    if (!server || typeof server !== 'object') return;
+    var m = LG.merge(LG.pg, server); Object.keys(LG.pg).forEach(function (k) { delete LG.pg[k]; }); Object.assign(LG.pg, m); lsSet(cacheKey(), LG.pg);
   }
-  function err(code) { return { code: code }; }
+  addEventListener('online', function () { dirty = true; LG.flush(); });
+
+  function startSession(res, tok) {
+    LG.S.user = { name: res.name, username: res.username }; lsSet(KEY.session, { username: res.username, name: res.name, token: tok }); lsSet(KEY.lastUser, res.username);
+    LG.pg = LG.merge(lsGet(cacheKey(), {}), res.progress || {}); lsSet(cacheKey(), LG.pg); lastPull = Date.now(); dirty = true; LG.flush();
+  }
   LG.signup = function (name, username, password) {
     name = String(name || '').trim(); username = String(username || '').trim().toLowerCase();
     if (!name || name.length > 60) return Promise.reject(err('invalid_name'));
     if (!/^[a-z0-9_.-]{3,20}$/.test(username)) return Promise.reject(err('invalid_username'));
     if (password.length < 8 || password.length > 72) return Promise.reject(err('invalid_password'));
-    var acc = accounts(); if (acc[username]) return Promise.reject(err('username_taken'));
-    var salt = LG.randHex(16);
-    return hashPw(password, salt).then(function (h) {
-      acc = accounts(); if (acc[username]) throw err('username_taken');
-      acc[username] = { name: name, salt: salt, hash: h, created: Date.now() }; setAccounts(acc); startSession(acc[username], username);
-    });
+    return LG.rpc('german_signup', { p_name: name, p_user: username, p_pass: password }).then(function (r) { ok(r); lsDel('lg.pg.' + username); startSession(r, r.token); });
   };
-  var fails = lsGet('lg.fails', {});
   LG.login = function (username, password) {
     username = String(username || '').trim().toLowerCase();
-    var f = fails[username] || { n: 0, until: 0 }; if (f.until > Date.now()) return Promise.reject(err('locked'));
-    var acc = accounts(), a = acc[username], dummy = a ? a.salt : '00000000000000000000000000000000';
-    return hashPw(password, dummy).then(function (h) {
-      if (!a || !eq(h, a.hash)) { f.n++; if (f.n >= 5) { f.until = Date.now() + 60000; f.n = 0; } fails[username] = f; lsSet('lg.fails', fails); throw err('bad_credentials'); }
-      delete fails[username]; lsSet('lg.fails', fails); startSession(a, username);
-    });
+    return LG.rpc('german_login', { p_user: username, p_pass: password }).then(function (r) { ok(r); startSession(r, r.token); });
   };
-  LG.clearLocal = function () { LG.S.user = null; LG.pg = C.emptyProgress(); lsDel(KEY.session); };
-  LG.logout = function () { LG.save(); LG.clearLocal(); LG.go('/'); return Promise.resolve(); };
+  LG.clearLocal = function () { LG.S.user = null; LG.pg = C.emptyProgress(); lsDel(KEY.session); LG.certCache = {}; };
+  LG.logout = function () {
+    var t = token(); return LG.flush(true).then(function () { if (t) LG.rpc('german_logout', { p_token: t }, true).catch(function () {}); LG.clearLocal(); LG.go('/'); });
+  };
   LG.forceLogout = function () { LG.clearLocal(); LG.go('/auth/login'); };
-  function verifyPw(password) { var a = accounts()[LG.S.user.username]; return hashPw(password, a.salt).then(function (h) { return eq(h, a.hash); }); }
   LG.deleteAccount = function (pw) {
-    return verifyPw(pw).then(function (ok) { if (!ok) throw err('bad_credentials'); var acc = accounts(), u = LG.S.user.username; delete acc[u]; setAccounts(acc); lsDel('lg.pg.' + u); lsDel(KEY.lastUser); LG.clearLocal(); });
+    return LG.rpc('german_delete_account', { p_token: token(), p_pass: pw }).then(function (r) { ok(r); var u = LG.S.user.username; lsDel('lg.pg.' + u); lsDel('lg.certs.' + u); lsDel(KEY.lastUser); LG.clearLocal(); });
   };
   LG.changePassword = function (o, n) {
     if (n.length < 8 || n.length > 72) return Promise.reject(err('invalid_password'));
-    return verifyPw(o).then(function (ok) { if (!ok) throw err('bad_credentials'); var salt = LG.randHex(16); return hashPw(n, salt).then(function (h) { var acc = accounts(), a = acc[LG.S.user.username]; a.salt = salt; a.hash = h; setAccounts(acc); }); });
+    return LG.rpc('german_change_password', { p_token: token(), p_old: o, p_new: n }).then(ok);
   };
-  /* backup file = the way to use the same account on another device (no server involved) */
-  LG.exportBackup = function () {
-    LG.save(); var u = LG.S.user.username, a = accounts()[u]; var body = { v: 1, username: u, account: a, progress: LG.pg, exported: Date.now() };
-    var json = JSON.stringify(body); return JSON.stringify({ data: body, check: LG.sha256hex('lgbackup|' + json) });
+  /* certificates are issued by the server (random code that exists only in the database) */
+  LG.certCache = {};
+  function certStore() { return 'lg.certs.' + (LG.S.user ? LG.S.user.username : '_'); }
+  LG.getCert = function (kind, n) {
+    var k = kind + n; if (!LG.certCache[k]) LG.certCache = Object.assign(lsGet(certStore(), {}), LG.certCache);
+    if (LG.certCache[k]) return Promise.resolve(LG.certCache[k]);
+    return LG.flush().then(function () { return LG.rpc('german_issue_cert', { p_token: token(), p_kind: kind, p_n: n }); }).then(function (r) {
+      ok(r); LG.certCache[k] = r; lsSet(certStore(), LG.certCache); return r;
+    });
   };
-  LG.importBackup = function (text) {
-    var o; try { o = JSON.parse(text); } catch (e) { throw err('bad_backup'); }
-    if (!o || !o.data || !o.data.account || !o.data.username || o.check !== LG.sha256hex('lgbackup|' + JSON.stringify(o.data))) throw err('bad_backup');
-    var d = o.data, acc = accounts(); if (!/^[a-z0-9_.-]{3,20}$/.test(d.username) || !d.account.hash || !d.account.salt) throw err('bad_backup');
-    if (!acc[d.username]) acc[d.username] = d.account; setAccounts(acc);
-    var key = 'lg.pg.' + d.username; lsSet(key, LG.merge(lsGet(key, null), d.progress)); return d.username;
-  };
+  LG.verifyCert = function (code) { return LG.rpc('german_verify', { p_code: code }); };
 
   /* ---------- settings ---------- */
   LG.settings = Object.assign({ rate: 0.9, voice: '', reminders: true }, lsGet(KEY.settings, {}));
@@ -323,7 +333,8 @@
     var logged = !!LG.S.user;
     if (!logged && !PUBLIC[name]) return LG.go('/auth/login');
     if (logged && name === 'auth') return LG.go('/');
-    if (logged && !LG.pg.placementDone && name !== 'placement' && name !== 'verify') return LG.go('/placement');
+    var NEEDS_LEVEL = { levels: 1, lesson: 1, levelTest: 1, stageExam: 1, review: 1, game: 1 };
+    if (logged && !LG.pg.placementDone && NEEDS_LEVEL[name]) return LG.go('/placement');
     LG.curRoute = { name: name, params: params, path: path, q: new URLSearchParams(q) };
     var v = LG.views[name]; if (!v) return;
     Promise.resolve(v(params, LG.curRoute.q)).then(function (view) { if (!view || LG.curRoute.path !== path) return; LG.render(view, name); window.scrollTo(0, 0); });
@@ -332,7 +343,7 @@
   var BOTTOM = [['/', 'home', 'Start'], ['/levels', 'book', 'Lernen'], ['/translator', 'globe', 'Übersetzer'], ['/wordbook', 'list', 'Wörter'], ['/profile', 'user', 'Profil']];
   function isOn(p, cur) { return p === '/' ? cur === '/' : cur.indexOf(p) === 0 || (p === '/levels' && /^\/(level|test|exam)\b/.test(cur)); }
   LG.render = function (view, name) {
-    var root = LG.$('#root'); document.title = (view.title ? view.title + ' – ' : '') + 'Language German';
+    var root = LG.$('#root'); document.title = (view.title ? view.title + ' – ' : '') + 'Languway German';
     if (view.bare || !LG.S.user) { root.innerHTML = view.html; if (view.mount) view.mount(root); return; }
     var cur = LG.curRoute.path, collapsed = lsGet(KEY.panel, false), u = LG.S.user, ini = LG.esc((u.name || '?').trim().charAt(0).toUpperCase());
     var due = LG.dueWords().length;
@@ -365,12 +376,17 @@
     try { sessionStorage.setItem(KEY.splash, '1'); } catch (e) {}
     function hide() { splash.classList.add('out'); setTimeout(function () { splash.remove(); }, 700); }
     if ('serviceWorker' in navigator && /^https?:/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(function () {});
-    var ses = lsGet(KEY.session, null), acc = accounts();
-    if (ses && ses.username && acc[ses.username]) startSession(acc[ses.username], ses.username); else lsDel(KEY.session);
-    if (LG.S.user) LG.touchDay();
+    var ses = lsGet(KEY.session, null), check = Promise.resolve();
+    if (ses && ses.token && ses.username) {
+      LG.S.user = { name: ses.name || ses.username, username: ses.username }; LG.pg = Object.assign(C.emptyProgress(), lsGet(cacheKey(), {}));
+      check = Promise.race([LG.rpc('german_session', { p_token: ses.token }), new Promise(function (r) { setTimeout(function () { r(null); }, 2800); })]).then(function (r) {
+        if (r && r.ok) { LG.S.user.name = r.name; lastPull = Date.now(); mergeIn(r.progress); dirty = true; LG.flush(); }
+        else if (r && r.ok === false) { LG.clearLocal(); }
+      }).catch(function () {});
+    } else lsDel(KEY.session);
     var minWait = new Promise(function (r) { setTimeout(r, fresh ? 3000 : 0); });
-    minWait.then(function () { LG.route(); hide(); });
+    Promise.all([minWait, check]).then(function () { if (LG.S.user) LG.touchDay(); LG.route(); hide(); });
     addEventListener('hashchange', LG.route);
-    document.addEventListener('visibilitychange', function () { if (LG.S.user && document.visibilityState === 'hidden') LG.save(); });
+    document.addEventListener('visibilitychange', function () { if (LG.S.user && document.visibilityState === 'hidden') { dirty = true; LG.flush(true); } });
   };
 })();

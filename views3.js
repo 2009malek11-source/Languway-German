@@ -1,4 +1,4 @@
-/* Language German – views part 3: translator (DE <-> EN), wordbook, smart review */
+/* Languway German – views part 3: translator (DE <-> EN), wordbook, smart review */
 (function () {
   'use strict';
   var LG = window.LG, C = LG.C, D = LG.D, P = LG.P, esc = LG.esc, ic = LG.ic;

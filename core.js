@@ -1,4 +1,4 @@
-/* Language German - core logic (UMD): word parsing, conjugation, tests, scoring, unlocking, PDF. */
+/* Languway German - core logic (UMD): word parsing, conjugation, tests, scoring, unlocking, PDF. */
 (function (root) {
   'use strict';
   var ART = { m: 'der', f: 'die', n: 'das' };

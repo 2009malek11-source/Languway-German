@@ -1,4 +1,4 @@
-/* Language German – views part 5: AI tutor (own API key), wrong-answer explainer, bilingual nudges, daily goal, games */
+/* Languway German – views part 5: AI tutor (own API key), wrong-answer explainer, bilingual nudges, daily goal, games */
 (function () {
   'use strict';
   var LG = window.LG, C = LG.C, D = LG.D, P = LG.P, esc = LG.esc, ic = LG.ic;
@@ -8,7 +8,7 @@
   function levelInfo() { var n = C.currentLevel(LG.pg); return { n: n, c: D.LEVELS[n - 1].c, t: D.LEVELS[n - 1].t }; }
   function system() {
     var l = levelInfo();
-    return 'You are the friendly tutor inside the German-learning app "Language German". The learner is currently at level ' + l.n + ' of 30 (CEFR ' + l.c + ', topic: ' + l.t + '). ' +
+    return 'You are the friendly tutor inside the German-learning app "Languway German". The learner is currently at level ' + l.n + ' of 30 (CEFR ' + l.c + ', topic: ' + l.t + '). ' +
       'ALWAYS answer in two parts: first in simple German that fits the learner\'s level (short sentences), then the same explanation in English after a line that says "EN:". ' +
       'Explain grammar rules clearly with 2-3 correct example sentences (with English translations). When the learner made a mistake, say what is wrong, why, and give the corrected version. ' +
       'Be encouraging and concise (under 200 words in total). Only discuss learning German; politely refuse other topics. Use plain text with no markdown headings.';
@@ -93,8 +93,12 @@
     return out.slice(0, 4);
   };
   LG.goalCard = function () {
-    var t = LG.today(), xp = (LG.pg.todayXP || {})[t] || 0, goal = 50, p = Math.min(100, Math.round(xp / goal * 100)), s = LG.streak();
-    return '<div class="grid c3" style="margin-top:16px"><div class="card stat"><b>' + s + '</b><span>Tage in Folge · day streak</span></div><div class="card stat"><b>' + (LG.pg.xp || 0) + '</b><span>XP gesamt</span></div><div class="card"><b>Tagesziel · daily goal</b><div class="bar" style="margin:8px 0 4px"><i style="width:' + p + '%"></i></div><small class="muted">' + xp + ' / ' + goal + ' XP' + (p >= 100 ? ' ✔' : '') + '</small></div></div>';
+    var t = LG.today(), xp = (LG.pg.todayXP || {})[t] || 0, goal = LG.settings.goal || 50, p = Math.min(100, Math.round(xp / goal * 100)), s = LG.streak();
+    return '<div class="grid c3" style="margin-top:16px"><div class="card stat"><b>' + s + '</b><span>Tage in Folge</span></div><div class="card stat"><b>' + (LG.pg.xp || 0) + '</b><span>XP gesamt</span></div><div class="card"><b>Tagesziel</b><div class="bar" style="margin:8px 0 4px"><i style="width:' + p + '%"></i></div><small class="muted">' + xp + ' / ' + goal + ' XP' + (p >= 100 ? ' ✔' : '') + '</small></div></div>';
+  };
+  LG.startCard = function () {
+    return '<a class="cta" href="#/placement" style="text-decoration:none"><ul><li>Einstufungstest</li><li><b>Finde dein Niveau</b> · 30 Fragen</li></ul></a>' +
+      '<div class="grid c3" style="margin-top:16px"><a class="card stat" href="#/translator" style="text-decoration:none;color:inherit"><b>' + ic('globe') + '</b><span>Übersetzer</span></a><a class="card stat" href="#/tutor" style="text-decoration:none;color:inherit"><b>' + ic('bulb') + '</b><span>KI-Tutor</span></a><a class="card stat" href="#/settings" style="text-decoration:none;color:inherit"><b>' + ic('settings') + '</b><span>Einstellungen</span></a></div>';
   };
   LG.tutorCard = function () {
     var n = LG.nudges(); if (!n.length) return '<div class="card" style="margin-top:16px"><h3>' + ic('bulb') + ' Dein Tutor sagt · Your tutor says</h3><p class="muted">Alles im grünen Bereich – weiter so! <i>Everything is on track – keep going!</i></p></div>';

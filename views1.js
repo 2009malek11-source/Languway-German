@@ -1,4 +1,4 @@
-/* Language German – views part 1: landing, accounts, dashboard, levels, lessons */
+/* Languway German – views part 1: landing, accounts, dashboard, levels, lessons */
 (function () {
   'use strict';
   var LG = window.LG, C = LG.C, D = LG.D, P = LG.P, esc = LG.esc, ic = LG.ic;
@@ -22,16 +22,16 @@
     var how = ['Erstelle dein Konto mit Namen, Benutzernamen und Passwort.', 'Mache den Einstufungstest mit 30 Fragen – oder starte ohne Vorkenntnisse beim Alphabet.', 'Lerne in 30 Stufen von leicht bis schwer: Buchstaben, Zahlen, Wörter, Sätze, Lesen, Schreiben, Hören, Sprechen.', 'Bestehe Stufentests (75 %) und Niveauprüfungen. Spaced Repetition, XP und Tagesziele halten dich motiviert.', 'Hole dir Zertifikate für jede Stufe, jedes Niveau und das Abschlusszertifikat nach der Gesamtprüfung.'];
     return {
       title: 'Deutsch lernen von A1 bis C2', bare: true, html:
-        '<div class="land"><nav class="land__nav"><div class="brand"><img src="logo-mark.png" alt="">Language German</div><button class="dn" data-act="theme" aria-label="Tag- und Nachtmodus wechseln"><span class="stars"></span><span class="cloud"></span><span class="knob"></span></button><a class="btn ghost sm" href="#/auth/login">Anmelden</a><a class="btn sm" href="#/auth/signup">Konto erstellen</a></nav>' +
+        '<div class="land"><nav class="land__nav"><div class="brand"><img src="logo-mark.png" alt="">Languway German</div><button class="dn" data-act="theme" aria-label="Tag- und Nachtmodus wechseln"><span class="stars"></span><span class="cloud"></span><span class="knob"></span></button><a class="btn ghost sm" href="#/auth/login">Anmelden</a><a class="btn sm" href="#/auth/signup">Konto erstellen</a></nav>' +
         '<section class="hero"><div><span class="tag">Teil der Languway-Serie</span><h1>Deutsch lernen, <em>Schritt für Schritt</em> von A1 bis C2.</h1><p class="lead">Eine vollständige Lernplattform: 30 Stufen, Einstufungstest, Hören, Sprechen, Übersetzer und Abschlusszertifikat – du beginnst bei null – mit dem Alphabet – und kommst bis zum souveränen Deutsch.</p>' +
         '<div class="row"><a class="btn" href="#/auth/signup">' + ic('arrowr') + ' Jetzt lernen</a><a class="btn ghost" href="#/auth/signup">Konto erstellen</a><a class="btn soft" href="#/auth/login">Anmelden</a></div></div>' +
-        '<div class="hero__art"><span class="bubble b1">Hallo!</span><span class="bubble b2">der · die · das</span><span class="bubble b3">Guten Tag</span><span class="bubble b4">ä ö ü ß</span><img class="logo" src="logo.png" alt="Language German Logo"></div></section>' +
+        '<div class="hero__art"><span class="bubble b1">Hallo!</span><span class="bubble b2">der · die · das</span><span class="bubble b3">Guten Tag</span><span class="bubble b4">ä ö ü ß</span><img class="logo" src="logo.png" alt="Languway German Logo"></div></section>' +
         '<section class="sec"><h2>Alles, was du zum Deutschlernen brauchst</h2><p class="sub">Alle Fertigkeiten in einer Plattform.</p><div class="grid c3">' + feats.map(function (f) { return '<div class="card feat"><div class="ic">' + ic(f[0]) + '</div><h3>' + f[1] + '</h3><p>' + f[2] + '</p></div>'; }).join('') + '</div></section>' +
         '<section class="sec"><h2>So funktioniert die Plattform</h2><p class="sub">Fünf klare Schritte.</p><div class="card"><ol class="steps">' + how.map(function (h) { return '<li>' + h + '</li>'; }).join('') + '</ol></div></section>' +
         '<section class="sec"><h2>Die sieben Niveaus</h2><p class="sub">Pre-A1 und die sechs Niveaus A1 bis C2 – jedes mit Stufentests und Abschlussprüfung.</p><div class="grid c3">' +
         STAGES.map(function (s, i) { return '<div class="card stagecard"><b>' + s[0] + '</b><div><strong>' + s[1] + '</strong></div><div class="muted">Stufen ' + RANGES[i][1] + '–' + RANGES[i][2] + '</div></div>'; }).join('') + '</div></section>' +
         '<section class="sec"><div class="card"><h2>Dein Lernsystem</h2><p>Jede Stufe enthält Einführung, Wortschatz, Grammatik, Hören, Sprechen, Lesen, Schreiben und Übung. Danach folgt der Stufentest: Mit mindestens 75 % schaltest du die nächste Stufe frei. Nach jedem Niveau wartet eine Abschlussprüfung, am Ende die Gesamtprüfung. Fehler landen automatisch in deiner Wiederholung.</p><a class="btn" href="#/auth/signup">Jetzt starten</a></div></section>' +
-        '<footer class="footer">Language German · Teil der Languway-Serie<br>Die Plattform ist unabhängig und nicht mit dem Goethe-Institut verbunden. Die Zertifikate sind Zertifikate der Plattform, keine offiziellen Sprachdiplome.</footer></div>'
+        '<footer class="footer">Languway German · Teil der Languway-Serie<br>Die Plattform ist unabhängig und nicht mit dem Goethe-Institut verbunden. Die Zertifikate sind Zertifikate der Plattform, keine offiziellen Sprachdiplome.</footer></div>'
     };
   }
 
@@ -45,8 +45,8 @@
     var res = tests.length ? tests.map(function (t) { return '<div class="resrow"><span>' + (t.kind === 'final' ? 'Gesamtprüfung' : t.kind === 'exam' ? 'Abschlussprüfung ' + STAGES[t.level - 1][0] : t.kind === 'review' ? 'Wiederholung' : 'Stufe ' + t.level) + '</span><b>' + t.score + '/' + t.total + ' · ' + t.pct + ' %</b></div>'; }).join('') : '<div class="empty">Noch keine Tests. Starte mit deiner ersten Stufe!</div>';
     var unitsDone = STAGES.filter(function (s, i) { return LG.stageDone(s[0]); }).length;
     return {
-      title: 'Start', heading: 'Willkommen zurück', html:
-        '<div class="card welcome"><button class="pbtn" data-act="cont" data-href="' + cta + '" aria-label="Weiterlernen">' + ring(p) + ic('play') + '</button><div><h2>Willkommen zurück, ' + esc(u.name.split(' ')[0]) + '!</h2><div>' + (allDone ? (nx === 'final' ? 'Alle Niveaus geschafft – jetzt die Gesamtprüfung.' : 'Alle Stufen geschafft – jetzt die Abschlussprüfung.') : 'Aktuelle Stufe: <b>' + n + ' · ' + esc(LG.lvTitle(n)) + '</b> (' + D.LEVELS[n - 1].c + ')') + '</div><div class="bar" style="margin:10px 0 4px"><i style="width:' + p + '%"></i></div><small>' + p + ' % des Kurses · ' + done + ' von 30 Stufen</small></div></div>' +
+      title: 'Start', heading: 'Start', html: !LG.pg.placementDone ? LG.startCard() : 
+        '<div class="card welcome"><button class="pbtn" data-act="cont" data-href="' + cta + '" aria-label="Weiterlernen">' + ring(p) + ic('play') + '</button><div><h2>Hallo, ' + esc(u.name.split(' ')[0]) + '!</h2><div>' + (allDone ? (nx === 'final' ? 'Alle Niveaus geschafft – jetzt die Gesamtprüfung.' : 'Alle Stufen geschafft – jetzt die Abschlussprüfung.') : 'Aktuelle Stufe: <b>' + n + ' · ' + esc(LG.lvTitle(n)) + '</b> (' + D.LEVELS[n - 1].c + ')') + '</div><div class="bar" style="margin:10px 0 4px"><i style="width:' + p + '%"></i></div><small>' + p + ' % des Kurses · ' + done + ' von 30 Stufen</small></div></div>' +
         '<a class="cta" href="' + cta + '" style="margin-top:16px;text-decoration:none"><ul><li>' + (allDone ? (nx === 'final' ? 'Gesamtprüfung' : 'Abschlussprüfung') : 'Nächste Lektion: Stufe ' + n + ' – ' + esc(LG.lvTitle(n))) + '</li><li><b>' + (allDone ? 'Prüfung starten' : stepLabel) + '</b> · Weiterlernen</li></ul></a>' +
         LG.goalCard() + LG.tutorCard() + '<div class="grid c4" style="margin-top:16px"><div class="card stat"><b>' + D.LEVELS[n - 1].c + '</b><span>Aktuelles Niveau</span></div><div class="card stat"><b>' + done + '</b><span>Stufen geschafft</span></div><div class="card stat"><b>' + unitsDone + '</b><span>Niveaus abgeschlossen</span></div><div class="card stat"><b>' + LG.pg.words.length + '</b><span>Wörter gelernt</span></div><div class="card stat"><b>' + hm(LG.pg.minutes) + '</b><span>Lernzeit</span></div></div>' +
         '<div class="grid c2" style="margin-top:16px;align-items:start"><div class="card"><h3>Testergebnisse</h3>' + res + '</div><div class="card"><h3>Wiederholung</h3><p class="muted">' + (due ? due + ' Wörter warten auf deine Wiederholung.' : 'Heute ist nichts fällig. Gut gemacht!') + '</p><a class="btn' + (due ? '' : ' soft') + '" href="#/review">' + ic('refresh') + ' Wiederholen</a></div></div>' +
@@ -66,12 +66,12 @@
   LG.views.auth = function (params) {
     var mode = params[0] || 'login', last = LG.lsGet('lg.lastUser', '');
     var html = '<div class="auth-wrap"><div class="auth" id="auth" data-mode="' + mode + '" dir="ltr">' +
-      '<div class="auth__brand"><img src="logo-mark.png" alt="Language German"><div><h2>Language German</h2><p class="sub">Learn German from zero to C2.</p></div></div>' +
+      '<div class="auth__brand"><img src="logo-mark.png" alt="Languway German"><div><h2>Languway German</h2><p class="sub">Learn German from zero to C2.</p></div></div>' +
       '<div class="auth__panes">' +
-      '<section class="auth__pane' + (mode === 'login' ? ' is-on' : '') + '" id="pane-login"' + (mode === 'login' ? '' : ' inert') + '><h2>Log in</h2><p class="hint">Enter your username and password. Your progress is stored securely in this browser.</p>' +
+      '<section class="auth__pane' + (mode === 'login' ? ' is-on' : '') + '" id="pane-login"' + (mode === 'login' ? '' : ' inert') + '><h2>Log in</h2><p class="hint">Enter your username and password. Your progress is saved to your account, so you can continue on any device.</p>' +
       '<form id="f-login" novalidate><div class="formerr" id="e-login" hidden></div><div class="field"><label for="l-user">Username</label><input id="l-user" dir="ltr" autocomplete="username" autocapitalize="none" spellcheck="false" value="' + esc(last) + '"></div>' +
       '<div class="field"><label for="l-pass">Password</label><div class="pw"><input id="l-pass" type="password" dir="ltr" autocomplete="current-password"><button type="button" data-act="pw" data-t="l-pass" aria-label="Show password">' + ic('eye') + '</button></div></div>' +
-      '<button class="btn block" type="submit">Log in</button></form><div class="switch">No account yet? <button type="button" data-act="authsw" data-to="signup">Create one</button></div><div class="switch"><button type="button" data-act="importbk">Restore from a backup file</button></div><div class="switch"><a href="#/">Back to home page</a></div></section>' +
+      '<button class="btn block" type="submit">Log in</button></form><div class="switch">No account yet? <button type="button" data-act="authsw" data-to="signup">Create one</button></div><div class="switch"><a href="#/">Back to home page</a></div></section>' +
       '<section class="auth__pane' + (mode === 'signup' ? ' is-on' : '') + '" id="pane-signup"' + (mode === 'signup' ? '' : ' inert') + '><h2>Create your account</h2><p class="hint">Your name, a username and a password. No e-mail or external account needed.</p>' +
       '<form id="f-signup" novalidate><div class="formerr" id="e-signup" hidden></div><div class="field"><label for="s-name">Name</label><input id="s-name" autocomplete="name" maxlength="60"></div>' +
       '<div class="field"><label for="s-user">Username</label><input id="s-user" dir="ltr" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="20"><small>3–20 characters: a–z, digits, _ - .</small></div>' +
@@ -79,7 +79,7 @@
       '<div class="field"><label for="s-pass2">Confirm password</label><input id="s-pass2" type="password" dir="ltr" autocomplete="new-password" maxlength="72"></div>' +
       '<button class="btn block" type="submit">Create account</button></form><div class="switch">Already registered? <button type="button" data-act="authsw" data-to="login">Log in</button></div></section></div>' +
       '<div class="auth__band" id="band" aria-hidden="true"><span class="band__edge band__edge--trail"></span><span class="band__edge band__edge--lead"></span><div class="band__inner"><div class="band__page" id="bandpage"><h3 class="welcome__title" id="bandtitle"></h3></div></div></div></div>' +
-      '<p class="auth-note">Your account is stored only in this browser — passwords are never saved in plain text and nothing is sent to any server. To use the same account on another device, download a backup file in Settings and restore it there.</p><input type="file" id="bkfile" accept=".json,application/json" hidden></div>';
+      '<p class="auth-note">Your account and progress are stored securely online. Passwords are never saved in plain text. You can log in on any device with the same username and password.</p></div>';
     return {
       title: mode === 'login' ? 'Anmelden' : 'Konto erstellen', bare: true, html: html,
       mount: function (root) {
@@ -98,8 +98,6 @@
             setTimeout(swap, 520); a.onfinish = done; a.oncancel = done;
           } else { swap(); done(); }
         };
-        LG.act.importbk = function () { LG.$('#bkfile').click(); };
-        LG.$('#bkfile').onchange = function (ev) { var f = ev.target.files[0]; if (!f) return; var r = new FileReader(); r.onload = function () { try { var u = LG.importBackup(String(r.result)); LG.$('#l-user').value = u; show('#e-login', ''); LG.toast('Backup restored. Log in with your username and password.'); } catch (e) { show('#e-login', LG.errText(e.code || 'bad_backup')); } }; r.readAsText(f); ev.target.value = ''; };
         LG.act.pw = function (t) { var i = LG.$('#' + t.dataset.t); i.type = i.type === 'password' ? 'text' : 'password'; };
         LG.$('#f-login').onsubmit = function (e) {
           e.preventDefault(); var u = LG.$('#l-user').value.trim(), p = LG.$('#l-pass').value, b = e.target.querySelector('button[type=submit]');
@@ -114,7 +112,7 @@
           if (p.length < 8) return show('#e-signup', LG.errText('invalid_password'));
           if (p !== p2) return show('#e-signup', 'The two passwords do not match.');
           b.disabled = true; show('#e-signup', '');
-          LG.signup(n, u, p).then(function () { LG.go('/placement'); }).catch(function (er) { show('#e-signup', LG.errText(er.code, 'ar')); b.disabled = false; });
+          LG.signup(n, u, p).then(function () { LG.go('/'); }).catch(function (er) { show('#e-signup', LG.errText(er.code, 'ar')); b.disabled = false; });
         };
       }
     };
@@ -154,7 +152,7 @@
     var lv = D.LEVELS[n - 1], step = q.get('step') || nextStep(n); if (step === 'test') step = 'intro';
     var tabs = STEPS.map(function (s) { return '<button class="tab' + (s[0] === step ? ' on' : '') + (stepDone(n, s[0]) ? ' ok' : '') + '" data-act="step" data-n="' + n + '" data-s="' + s[0] + '">' + ic(s[1]) + ' ' + s[2] + '</button>'; }).join('') + '<a class="tab" href="#/test/' + n + '">' + ic('target') + ' Stufentest</a>';
     return {
-      title: 'Stufe ' + n, heading: 'Stufe ' + n + ' · ' + lv.t, html: '<div class="crumb"><a href="#/levels">Lernen</a> › ' + lv.c + ' › Stufe ' + n + '</div><div class="tabs" id="tabs">' + tabs + '</div><div id="stepbox"></div>',
+      title: 'Stufe ' + n, heading: 'Stufe ' + n + ' · ' + lv.t, html: '<div class="crumb"><a href="#/levels">Lernen</a> › ' + lv.c + ' › Stufe ' + n + '</div><div class="tabs" id="tabs">' + tabs + '</div>' + (function () { var d = STEPS.filter(function (s) { return stepDone(n, s[0]); }).length, pc = Math.round(d / STEPS.length * 100); return '<div class="lessonbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pc + '"><div class="bar"><i style="width:' + pc + '%"></i></div><small>' + d + ' von ' + STEPS.length + ' Schritten · ' + pc + ' %</small></div>'; })() + '<div id="stepbox"></div>',
       mount: function () { showStep(n, step); }
     };
   };
@@ -188,10 +186,14 @@
     return h + '</div>';
   }
   function conjTable(w) {
-    var c = C.conjugate(w), rows = '';
-    for (var i = 0; i < 6; i++) rows += '<tr><th>' + c.pron[i] + '</th><td>' + esc(c.pres[i]) + '</td><td>' + esc(c.pret[i]) + '</td><td>' + esc(c.perf[i]) + '</td></tr>';
-    return '<details class="more"><summary>Verbformen anzeigen</summary><table class="conj"><tr><th></th><th>Präsens</th><th>Präteritum</th><th>Perfekt</th></tr>' + rows + '</table></details>';
+    var c = C.conjugate(w), T = [['pres', 'Präsens'], ['pret', 'Präteritum'], ['perf', 'Perfekt']];
+    var tabs = '<div class="ctabs" role="tablist">' + T.map(function (t, k) { return '<button type="button" role="tab" class="ctab' + (k === 0 ? ' on' : '') + '" data-act="conjtab" data-t="' + t[0] + '">' + t[1] + '</button>'; }).join('') + '</div>';
+    var panes = T.map(function (t, k) {
+      return '<div class="cpane" data-pane="' + t[0] + '"' + (k ? ' hidden' : '') + '>' + [0, 1, 2, 3, 4, 5].map(function (i) { var f = c[t[0]][i]; return '<button type="button" class="crow" data-act="speak" data-say="' + esc(c.pron[i] + ' ' + f) + '"><span class="cp">' + c.pron[i] + '</span><b>' + esc(f) + '</b><span class="cs">' + ic('speaker') + '</span></button>'; }).join('') + '</div>';
+    }).join('');
+    return '<details class="more"><summary>Verbformen anzeigen</summary><div class="conj2">' + tabs + panes + '<p class="muted" style="font-size:13px;margin:8px 0 0">Tippe auf eine Form, um sie zu hören.</p></div></details>';
   }
+  LG.act.conjtab = function (t) { var box = t.closest('.conj2'); LG.$$('.ctab', box).forEach(function (b) { b.classList.toggle('on', b === t); }); LG.$$('.cpane', box).forEach(function (p) { p.hidden = p.dataset.pane !== t.dataset.t; }); };
   LG.wordCard = wordCard; LG.conjTable = conjTable;
 
   var ALPHA = [['A','Apfel'],['B','Bus'],['C','Computer'],['D','Danke'],['E','Ei'],['F','Fisch'],['G','gut'],['H','Haus'],['I','Insel'],['J','Jahr'],['K','Kaffee'],['L','Lampe'],['M','Mutter'],['N','Name'],['O','Obst'],['P','Park'],['Q','Quelle'],['R','rot'],['S','Sonne'],['T','Tisch'],['U','Uhr'],['V','Vater'],['W','Wasser'],['X','Xylofon'],['Y','Yoga'],['Z','Zeit'],['Ä','Äpfel'],['Ö','Öl'],['Ü','Übung'],['ß','Straße']];
@@ -211,7 +213,7 @@
     grammar: function (n, lv) {
       var g = lv.gr;
       var extra = lv.alpha ? alphaGrid() : lv.nums ? numGrid() : '';
-      return { html: '<div class="card gr"><h2>' + esc(g.t) + '</h2>' + (g.en ? '<div class="enhelp"><b>In English:</b> ' + esc(g.en) + '</div>' : '') + g.p.map(function (x) { return '<p>' + esc(x) + '</p>'; }).join('') + extra + '<h3>Beispiele</h3><ul class="exlist">' + g.ex.map(function (x) { return '<li>' + sp(x) + '<span>' + esc(x) + '</span></li>'; }).join('') + '</ul></div>' };
+      return { html: '<div class="card gr"><h2>' + esc(g.t) + '</h2>' + (g.en ? '<details class="enhelp"><summary>Hilfe auf Englisch</summary>' + esc(g.en) + '</details>' : '') + g.p.map(function (x) { return '<p>' + esc(x) + '</p>'; }).join('') + extra + '<h3>Beispiele</h3><ul class="exlist">' + g.ex.map(function (x) { return '<li>' + sp(x) + '<span>' + esc(x) + '</span></li>'; }).join('') + '</ul></div>' };
     },
     listen: function (n, lv) {
       var ls = lv.ls;
