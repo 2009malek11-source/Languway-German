@@ -39,6 +39,7 @@
     menu: '<path d="M4 6h16M4 12h16M4 18h16"/>', arrowr: '<path d="M5 12h14M13 6l6 6-6 6"/>',
     swap: '<path d="M7 7h13l-3-3M17 17H4l3 3"/>',
     eye: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+    moon: '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
     chevron: '<path d="m6 9 6 6 6-6"/>', sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>', save: '<path d="M5 3h11l3 3v15H5z"/><path d="M8 3v6h8V3M8 21v-7h8v7"/>', info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/>',
     download: '<path d="M12 3v12M7 10l5 5 5-5M4 21h16"/>',
     printer: '<path d="M6 9V3h12v6M6 18H4v-7h16v7h-2"/><path d="M6 14h12v7H6z"/>',
@@ -347,14 +348,15 @@
     if (view.bare || !LG.S.user) { root.innerHTML = view.html; if (view.mount) view.mount(root); return; }
     var cur = LG.curRoute.path, collapsed = lsGet(KEY.panel, false), u = LG.S.user, ini = LG.esc((u.name || '?').trim().charAt(0).toUpperCase());
     var due = LG.dueWords().length;
-    var items = NAV.map(function (n) { return '<a class="menu-item' + (isOn(n[0], cur) ? ' on' : '') + '" href="#' + n[0] + '" title="' + n[2] + '">' + LG.ic(n[1]) + '<span>' + n[2] + '</span>' + (n[0] === '/review' && due ? '<b class="badge">' + due + '</b>' : '') + '</a>'; }).join('');
+    var SEP = { '/review': 1, '/tutor': 1, '/settings': 1 };
+    var items = NAV.map(function (n) { return (SEP[n[0]] ? '<div class="divider"></div>' : '') + '<a class="menu-item' + (isOn(n[0], cur) ? ' on' : '') + '" href="#' + n[0] + '" title="' + n[2] + '">' + LG.ic(n[1]) + '<span>' + n[2] + '</span>' + (n[0] === '/review' && due ? '<b class="badge">' + due + '</b>' : '') + '</a>'; }).join('');
     root.innerHTML =
-      '<div class="shell"><aside class="panel' + (collapsed ? ' collapsed' : '') + '" id="panel"><div class="header"><h2><img src="logo-mark.png" alt=""><span>Menü</span></h2><button class="close" data-act="panelx" aria-label="Menü schließen">' + LG.ic('x') + '</button></div>' +
+      '<div class="shell"><aside class="panel' + (collapsed ? ' collapsed' : '') + '" id="panel"><div class="header"><h2><img src="logo-mark.png" alt=""><span>Menü</span></h2><button class="close" data-act="panelx" aria-label="Menü ein- oder ausklappen">' + LG.ic(collapsed ? 'menu' : 'x') + '</button></div>' +
       '<form class="search-box" id="psearch" role="search">' + LG.ic('search') + '<input type="search" placeholder="Wort suchen …" aria-label="Wort suchen"></form><div class="divider"></div>' + items +
       '<div class="grow"></div><div class="divider"></div><a class="me menu-item" href="#/profile" style="padding:10px"><span class="avatar">' + ini + '</span><div><b>' + LG.esc(u.name) + '</b><small>@' + LG.esc(u.username) + '</small></div></a></aside><div class="panel-scrim" data-act="panelx"></div>' +
       '<main class="main" id="main"><header class="topbar"><button class="iconbtn menu" data-act="panelopen" aria-label="Menü öffnen">' + LG.ic('menu') + '</button><h1>' + LG.esc(view.heading || view.title || '') + '</h1><span id="syncdot" class="tag"></span>' +
       '<button class="dn" data-act="theme" aria-label="Tag- und Nachtmodus wechseln"><span class="stars"></span><span class="cloud"></span><span class="knob"></span></button></header>' + view.html + '</main></div>' +
-      '<nav class="liquid-nav" aria-label="Hauptnavigation"><div class="liquid-glare-container"><span class="liquid-glare"></span></div>' + BOTTOM.map(function (n) { return '<a href="#' + n[0] + '" class="' + (isOn(n[0], cur) ? 'on' : '') + '" aria-label="' + n[2] + '">' + LG.ic(n[1]) + '<span>' + n[2] + '</span></a>'; }).join('') + '</nav>';
+      '<nav class="liquid-nav" aria-label="Hauptnavigation"><div class="liquid-glare-container"><span class="liquid-glare"></span></div>' + BOTTOM.map(function (n) { return '<a href="#' + n[0] + '" class="' + (isOn(n[0], cur) ? 'on' : '') + '" aria-label="' + n[2] + '">' + LG.ic(n[1]) + '<span>' + n[2] + '</span></a>'; }).join('') + '<i class="nav-sep"></i><button type="button" class="nav-theme" data-act="theme" aria-label="Tag- und Nachtmodus wechseln"><span class="i-moon">' + LG.ic('moon') + '</span><span class="i-sun">' + LG.ic('sun') + '</span></button></nav>';
     LG.setSync('saved');
     var ps = LG.$('#psearch'); ps.onsubmit = function (e) { e.preventDefault(); var v = ps.querySelector('input').value.trim(); LG.$('#panel').classList.remove('open'); LG.go('/wordbook?q=' + encodeURIComponent(v)); };
     if (collapsed) LG.$('#psearch').addEventListener('click', function () { if (LG.$('#panel').classList.contains('collapsed')) { LG.$('#panel').classList.remove('collapsed'); lsSet(KEY.panel, false); ps.querySelector('input').focus(); } });
@@ -364,7 +366,7 @@
   document.addEventListener('click', function (e) {
     var t = e.target.closest('[data-act]'); if (!t) return; var f = LG.act[t.dataset.act]; if (f) f(t, e);
   });
-  LG.act.panelx = function () { var p = LG.$('#panel'); if (matchMedia('(max-width:900px)').matches) p.classList.remove('open'); else { var c = !p.classList.contains('collapsed'); p.classList.toggle('collapsed', c); lsSet(KEY.panel, c); } };
+  LG.act.panelx = function () { var p = LG.$('#panel'); if (matchMedia('(max-width:900px)').matches) p.classList.remove('open'); else { var c = !p.classList.contains('collapsed'); p.classList.toggle('collapsed', c); lsSet(KEY.panel, c); var cb = p.querySelector('.close'); if (cb) cb.innerHTML = LG.ic(c ? 'menu' : 'x'); } };
   LG.act.panelopen = function () { LG.$('#panel').classList.add('open'); };
   LG.act.theme = function () { LG.theme(LG.theme() === 'dark' ? 'light' : 'dark'); };
   LG.act.speak = function (t) { LG.speak(t.dataset.say, { rate: LG.settings.rate }); };
