@@ -71,6 +71,7 @@
       '<p class="muted" style="font-size:13px">Nach der Installation startet die App wie eine normale App, auch ohne Internet (außer für den KI-Tutor).</p></div>';
     var html =
       '<p class="muted" style="margin-bottom:12px">Tippe auf einen Bereich, um ihn zu öffnen.</p>' +
+      sec('lang', 'globe', 'Sprache · Language · اللغة', 'Oberfläche und Hilfssprache', LG.langSettings(), open === 'lang') +
       sec('look', 'sun', 'Darstellung', 'Tag/Nacht, Schriftgröße, Animationen',
         '<div class="setrow"><div><b>Tag- und Nachtmodus</b><div class="muted" style="font-size:13px">Wird auf diesem Gerät gespeichert.</div></div><button class="dn" data-act="theme" aria-label="Tag- und Nachtmodus wechseln"><span class="stars"></span><span class="cloud"></span><span class="knob"></span></button></div>' +
         '<div class="setrow"><label for="s-fs"><b>Schriftgröße</b></label><select id="s-fs"><option value="s">Klein</option><option value="m">Normal</option><option value="l">Groß</option></select></div>' +

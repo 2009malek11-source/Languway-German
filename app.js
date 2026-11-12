@@ -320,7 +320,7 @@
 
   /* ---------- router + shell ---------- */
   var ROUTES = [
-    [/^\/$/, 'home'], [/^\/auth\/(login|signup)$/, 'auth'], [/^\/verify\/([A-Za-z0-9_.~-]+)$/, 'verify'], [/^\/placement$/, 'placement'],
+    [/^\/$/, 'home'], [/^\/auth\/(login|signup)$/, 'auth'], [/^\/verify\/([A-Za-z0-9_.~-]+)$/, 'verify'], [/^\/placement$/, 'placement'], [/^\/welcome$/, 'welcome'],
     [/^\/levels$/, 'levels'], [/^\/level\/(\d+)$/, 'lesson'], [/^\/test\/(\d+)$/, 'levelTest'], [/^\/exam\/([1-7]|final)$/, 'stageExam'],
     [/^\/translator$/, 'translator'], [/^\/wordbook$/, 'wordbook'], [/^\/review$/, 'review'], [/^\/profile$/, 'profile'], [/^\/settings$/, 'settings'], [/^\/certificates$/, 'certificates'], [/^\/certificate\/([A-Za-z0-9]+)$/, 'certificate'], [/^\/tutor$/, 'tutor'], [/^\/game$/, 'game']
   ];
@@ -334,6 +334,7 @@
     var logged = !!LG.S.user;
     if (!logged && !PUBLIC[name]) return LG.go('/auth/login');
     if (logged && name === 'auth') return LG.go('/');
+    if (logged && name === 'home' && LG.onboarded && !LG.onboarded()) return LG.go('/welcome');
     var NEEDS_LEVEL = { levels: 1, lesson: 1, levelTest: 1, stageExam: 1, review: 1, game: 1 };
     if (logged && !LG.pg.placementDone && NEEDS_LEVEL[name]) return LG.go('/placement');
     LG.curRoute = { name: name, params: params, path: path, q: new URLSearchParams(q) };
@@ -355,7 +356,7 @@
       '<form class="search-box" id="psearch" role="search">' + LG.ic('search') + '<input type="search" placeholder="Wort suchen …" aria-label="Wort suchen"></form><div class="divider"></div>' + items +
       '<div class="grow"></div><div class="divider"></div><a class="me menu-item" href="#/profile" style="padding:10px"><span class="avatar">' + ini + '</span><div><b>' + LG.esc(u.name) + '</b><small>@' + LG.esc(u.username) + '</small></div></a></aside><div class="panel-scrim" data-act="panelx"></div>' +
       '<main class="main" id="main"><header class="topbar"><button class="iconbtn menu" data-act="panelopen" aria-label="Menü öffnen">' + LG.ic('menu') + '</button><h1>' + LG.esc(view.heading || view.title || '') + '</h1><span id="syncdot" class="tag"></span>' +
-      '<button class="dn" data-act="theme" aria-label="Tag- und Nachtmodus wechseln"><span class="stars"></span><span class="cloud"></span><span class="knob"></span></button></header>' + view.html + '</main></div>' +
+      '' + (LG.langSwitch ? LG.langSwitch() : '') + '<button class="dn" data-act="theme" aria-label="Tag- und Nachtmodus wechseln"><span class="stars"></span><span class="cloud"></span><span class="knob"></span></button></header>' + view.html + '</main></div>' +
       '<nav class="liquid-nav" aria-label="Hauptnavigation"><div class="liquid-glare-container"><span class="liquid-glare"></span></div>' + BOTTOM.map(function (n) { return '<a href="#' + n[0] + '" class="' + (isOn(n[0], cur) ? 'on' : '') + '" aria-label="' + n[2] + '">' + LG.ic(n[1]) + '<span>' + n[2] + '</span></a>'; }).join('') + '<i class="nav-sep"></i><button type="button" class="nav-theme" data-act="theme" aria-label="Tag- und Nachtmodus wechseln"><span class="i-moon">' + LG.ic('moon') + '</span><span class="i-sun">' + LG.ic('sun') + '</span></button></nav>';
     LG.setSync('saved');
     var ps = LG.$('#psearch'); ps.onsubmit = function (e) { e.preventDefault(); var v = ps.querySelector('input').value.trim(); LG.$('#panel').classList.remove('open'); LG.go('/wordbook?q=' + encodeURIComponent(v)); };

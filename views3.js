@@ -12,7 +12,7 @@
     Object.keys(UNIQ).forEach(function (k) {
       var w = UNIQ[k];
       C.allForms(w).concat([w.lemma, w.display]).forEach(function (f) { add(IDX.de, C.norm(f), w); });
-      w.en.split(/[,;]/).forEach(function (m) { m = m.replace(/\(.*?\)/g, '').trim().toLowerCase(); if (!m) return; add(IDX.en, m, w); add(IDX.en, m.replace(/^to /, ''), w); add(IDX.en, m.replace(/^(a|an|the) /, ''), w); });
+      (w.enOrig || w.en).split(/[,;]/).forEach(function (m) { m = m.replace(/\(.*?\)/g, '').trim().toLowerCase(); if (!m) return; add(IDX.en, m, w); add(IDX.en, m.replace(/^to /, ''), w); add(IDX.en, m.replace(/^(a|an|the) /, ''), w); });
     });
     return IDX;
   }
@@ -25,8 +25,8 @@
   function findPhrase(text, dir) {
     var t = C.normExact(text).replace(/\s+/g, ' ');
     for (var i = 0; i < D.PHRASES.length; i++) {
-      var p = D.PHRASES[i].split('|'), de = p[0], en = p[1];
-      if (dir === 'de' && C.normExact(de) === t) return { de: de, en: en };
+      var p = D.PHRASES[i].split('|'), de = p[0], en = p[1], shown = LG.phraseGloss(de, en);
+      if (dir === 'de' && C.normExact(de) === t) return { de: de, en: shown, enOrig: en };
       if (dir === 'en') { var alts = en.split(/ \/ | \(/)[0].split(' / '); if ([en].concat(alts).some(function (a) { return C.normExact(a) === t; })) return { de: de, en: en }; }
     }
     return null;
@@ -104,7 +104,7 @@
           var list = all.filter(function (w) {
             if (f.stage !== 'all' && (!w.level || D.LEVELS[w.level - 1].c !== f.stage)) return false; if (f.type !== 'all' && w.type !== f.type) return false;
             if (f.learned && !LG.pg.words.some(function (id) { var x = P.byId[id]; return x && x.lemma === w.lemma && x.type === w.type; })) return false;
-            if (!qv) return true; return C.norm(w.lemma).indexOf(nk) > -1 || w.en.toLowerCase().indexOf(lk) > -1 || C.allForms(w).some(function (x) { return C.norm(x) === nk; });
+            if (!qv) return true; return C.norm(w.lemma).indexOf(nk) > -1 || ((w.enOrig || w.en).toLowerCase().indexOf(lk) > -1 || (w.en || '').indexOf(lk) > -1) || C.allForms(w).some(function (x) { return C.norm(x) === nk; });
           });
           LG.$('#wbc', root).textContent = list.length + ' Wörter';
           LG.$('#wbl', root).innerHTML = list.length ? list.slice(0, limit).map(function (w) { return '<div class="wrow" data-act="wbopen" data-id="' + w.id + '">' + (w.type === 'n' ? '<span class="art ' + w.article + '" style="font-size:13px;padding:1px 8px;border-radius:8px;color:#fff">' + w.article + '</span>' : '') + '<b>' + esc(w.lemma) + '</b><span class="tag">' + (w.level ? D.LEVELS[w.level - 1].c : '·') + '</span><span class="en">' + esc(w.gloss) + '</span></div>'; }).join('') + (list.length > limit ? '<button class="btn soft" data-act="wbmore">Mehr anzeigen</button>' : '') : '<div class="card empty">Keine Wörter gefunden.</div>';

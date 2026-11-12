@@ -22,7 +22,7 @@
     var how = ['Erstelle dein Konto mit Namen, Benutzernamen und Passwort.', 'Mache den Einstufungstest mit 30 Fragen – oder starte ohne Vorkenntnisse beim Alphabet.', 'Lerne in 30 Stufen von leicht bis schwer: Buchstaben, Zahlen, Wörter, Sätze, Lesen, Schreiben, Hören, Sprechen.', 'Bestehe Stufentests (75 %) und Niveauprüfungen. Spaced Repetition, XP und Tagesziele halten dich motiviert.', 'Hole dir Zertifikate für jede Stufe, jedes Niveau und das Abschlusszertifikat nach der Gesamtprüfung.'];
     return {
       title: 'Deutsch lernen von A1 bis C2', bare: true, html:
-        '<div class="land"><nav class="land__nav"><div class="brand"><img src="logo-mark.png" alt="">Languway German</div><button class="dn" data-act="theme" aria-label="Tag- und Nachtmodus wechseln"><span class="stars"></span><span class="cloud"></span><span class="knob"></span></button><a class="btn ghost sm" href="#/auth/login">Anmelden</a><a class="btn sm" href="#/auth/signup">Konto erstellen</a></nav>' +
+        '<div class="land"><nav class="land__nav"><div class="brand"><img src="logo-mark.png" alt="">Languway German</div>' + LG.langSwitch() + '<button class="dn" data-act="theme" aria-label="Tag- und Nachtmodus wechseln"><span class="stars"></span><span class="cloud"></span><span class="knob"></span></button><a class="btn ghost sm" href="#/auth/login">Anmelden</a><a class="btn sm" href="#/auth/signup">Konto erstellen</a></nav>' +
         '<section class="hero"><div><span class="tag">Teil der Languway-Serie</span><h1>Deutsch lernen, <em>Schritt für Schritt</em> von A1 bis C2.</h1><p class="lead">Eine vollständige Lernplattform: 30 Stufen, Einstufungstest, Hören, Sprechen, Übersetzer und Abschlusszertifikat – du beginnst bei null – mit dem Alphabet – und kommst bis zum souveränen Deutsch.</p>' +
         '<div class="row"><a class="btn" href="#/auth/signup">' + ic('arrowr') + ' Jetzt lernen</a><a class="btn ghost" href="#/auth/signup">Konto erstellen</a><a class="btn soft" href="#/auth/login">Anmelden</a></div></div>' +
         '<div class="hero__art"><span class="bubble b1">Hallo!</span><span class="bubble b2">der · die · das</span><span class="bubble b3">Guten Tag</span><span class="bubble b4">ä ö ü ß</span><img class="logo" src="logo-round.png" alt="Languway German Logo" width="260" height="260"></div></section>' +
@@ -65,7 +65,7 @@
   /* ---------- authentication (login / signup with sweeping blade) ---------- */
   LG.views.auth = function (params) {
     var mode = params[0] || 'login', last = LG.lsGet('lg.lastUser', '');
-    var html = '<div class="auth-wrap"><div class="auth" id="auth" data-mode="' + mode + '" dir="ltr">' +
+    var html = '<div class="auth-wrap"><div class="auth-lang">' + LG.langSwitch() + '</div><div class="auth" id="auth" data-mode="' + mode + '" dir="ltr">' +
       '<div class="auth__brand"><img src="logo-mark.png" alt="Languway German"><div><h2>Languway German</h2><p class="sub">Learn German from zero to C2.</p></div></div>' +
       '<div class="auth__panes">' +
       '<section class="auth__pane' + (mode === 'login' ? ' is-on' : '') + '" id="pane-login"' + (mode === 'login' ? '' : ' inert') + '><h2>Log in</h2><p class="hint">Enter your username and password. Your progress is saved to your account, so you can continue on any device.</p>' +
@@ -174,14 +174,14 @@
   LG.spBtn = sp;
 
   function wordCard(w) {
-    var h = '<div class="card wcard"><div><h3>' + (w.type === 'n' ? '<span class="art ' + w.article + '">' + w.article + '</span>' + esc(w.lemma) : esc(w.lemma)) + '</h3></div><div>' + sp(w.type === 'n' ? w.display : w.lemma) + '</div>';
+    var h = '<div class="card wcard"><div><h3>' + (w.type === 'n' ? '<span class="art ' + w.article + '">' + w.article + '</span>' + (LG.cmpHtml(w.lemma) || esc(w.lemma)) : esc(w.lemma)) + '</h3></div><div>' + sp(w.type === 'n' ? w.display : w.lemma) + '</div>';
     var meta = [];
     if (w.type === 'n') meta.push('Plural: ' + (w.plural === '-' ? 'kein Plural' : 'die ' + esc(w.plural)));
     if (w.type === 'a' && w.comp !== '-') meta.push(esc(w.lemma) + ' – ' + esc(w.comp) + ' – ' + esc(w.sup));
     if (w.type === 'v') { var c = C.conjugate(w); meta.push('Partizip II: ' + esc(c.pp) + ' (' + c.aux + ')'); }
     if (w.type === 'o' && w.pos) meta.push(esc(w.pos));
     h += '<div class="meta"><b>' + esc(w.en) + '</b>' + (meta.length ? ' · ' + meta.join(' · ') : '') + '</div>';
-    h += '<div class="meta">' + esc(w.defDE) + '<br><i>' + esc(w.defEN) + '</i></div><div class="ex">' + esc(w.ex) + ' <button class="iconbtn" style="width:32px;height:32px" data-act="speak" data-say="' + esc(w.ex) + '" aria-label="Satz anhören">' + ic('speaker') + '</button></div>';
+    h += '<div class="meta">' + esc(w.defDE) + (LG.showDefEN(w.level) ? '<br><i>' + esc(w.defEN) + '</i>' : '') + '</div><div class="ex">' + esc(w.ex) + ' <button class="iconbtn" style="width:32px;height:32px" data-act="speak" data-say="' + esc(w.ex) + '" aria-label="Satz anhören">' + ic('speaker') + '</button></div>';
     if (w.type === 'v') h += conjTable(w);
     return h + '</div>';
   }
@@ -208,12 +208,12 @@
     },
     vocab: function (n) {
       var ws = LG.levelWords(n);
-      return { html: '<p class="muted">Tippe auf das Lautsprecher-Symbol, um die Aussprache zu hören.</p>' + ws.map(wordCard).join('') + '<div class="row" style="margin-top:14px"><button class="btn soft" data-act="learned" data-n="' + n + '">' + ic('check') + ' Ich habe alle Wörter gelernt</button></div>' };
+      return { html: '<p class="muted">Tippe auf das Lautsprecher-Symbol, um die Aussprache zu hören.</p>' + (n <= 2 ? LG.cognateCard(n) : '') + (n >= 2 && n <= 17 ? LG.compCard(n) : '') + ws.map(wordCard).join('') + '<div class="row" style="margin-top:14px"><button class="btn soft" data-act="learned" data-n="' + n + '">' + ic('check') + ' Ich habe alle Wörter gelernt</button></div>' };
     },
     grammar: function (n, lv) {
       var g = lv.gr;
       var extra = lv.alpha ? alphaGrid() : lv.nums ? numGrid() : '';
-      return { html: '<div class="card gr"><h2>' + esc(g.t) + '</h2>' + (g.en ? '<details class="enhelp"><summary>Hilfe auf Englisch</summary>' + esc(g.en) + '</details>' : '') + g.p.map(function (x) { return '<p>' + esc(x) + '</p>'; }).join('') + extra + '<h3>Beispiele</h3><ul class="exlist">' + g.ex.map(function (x) { return '<li>' + sp(x) + '<span>' + esc(x) + '</span></li>'; }).join('') + '</ul></div>' };
+      return { html: '<div class="card gr"><h2>' + esc(g.t) + '</h2>' + LG.helpHtml(n, g) + g.p.map(function (x) { return '<p>' + esc(x) + '</p>'; }).join('') + extra + '<h3>Beispiele</h3><ul class="exlist">' + g.ex.map(function (x) { return '<li>' + sp(x) + '<span>' + esc(x) + '</span></li>'; }).join('') + '</ul></div>' };
     },
     listen: function (n, lv) {
       var ls = lv.ls;
