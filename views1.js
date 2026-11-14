@@ -55,7 +55,7 @@
     };
   }
   function reminders(due) {
-    if (!LG.settings.reminders || LG._remShown) return; LG._remShown = 1;
+    if (!LG.settings.reminders || LG._remShown || !LG.pg.placementDone) return; LG._remShown = 1;
     var msg = due ? 'Zeit, deinen Wortschatz zu wiederholen (' + due + ' Wörter).' : null;
     if (!msg && LG.passedCount() < 30) msg = 'Deine nächste Lektion ist bereit.';
     if (msg) setTimeout(function () { LG.toast(msg); }, 1200);
@@ -66,7 +66,7 @@
   LG.views.auth = function (params) {
     var mode = params[0] || 'login', last = LG.lsGet('lg.lastUser', '');
     var html = '<div class="auth-wrap"><div class="auth-lang">' + LG.langSwitch() + '</div><div class="auth" id="auth" data-mode="' + mode + '" dir="ltr">' +
-      '<div class="auth__brand"><img src="logo-mark.png" alt="Languway German"><div><h2>Languway German</h2><p class="sub">Learn German from zero to C2.</p></div></div>' +
+      '<div class="auth__brand"><img src="logo-mark.png" alt="Languway German"><div><h1>Languway German</h1><p class="sub">Learn German from zero to C2.</p></div></div>' +
       '<div class="auth__panes">' +
       '<section class="auth__pane' + (mode === 'login' ? ' is-on' : '') + '" id="pane-login"' + (mode === 'login' ? '' : ' inert') + '><h2>Log in</h2><p class="hint">Enter your username and password. Your progress is saved to your account, so you can continue on any device.</p>' +
       '<form id="f-login" novalidate><div class="formerr" id="e-login" hidden></div><div class="field"><label for="l-user">Username</label><input id="l-user" dir="ltr" autocomplete="username" autocapitalize="none" spellcheck="false" value="' + esc(last) + '"></div>' +

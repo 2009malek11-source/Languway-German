@@ -110,7 +110,7 @@
           LG.$('#wbl', root).innerHTML = list.length ? list.slice(0, limit).map(function (w) { return '<div class="wrow" data-act="wbopen" data-id="' + w.id + '">' + (w.type === 'n' ? '<span class="art ' + w.article + '" style="font-size:13px;padding:1px 8px;border-radius:8px;color:#fff">' + w.article + '</span>' : '') + '<b>' + esc(w.lemma) + '</b><span class="tag">' + (w.level ? D.LEVELS[w.level - 1].c : '·') + '</span><span class="en">' + esc(w.gloss) + '</span></div>'; }).join('') + (list.length > limit ? '<button class="btn soft" data-act="wbmore">Mehr anzeigen</button>' : '') : '<div class="card empty">Keine Wörter gefunden.</div>';
         }
         LG.act.wbmore = function () { limit += 400; draw(); };
-        LG.act.wbopen = function (t) { var w = P.byId[t.dataset.id]; LG.modal(entryCard(w) + '<div class="modal__actions"><button class="btn soft" onclick="LG.closeModal()">Schließen</button></div>'); };
+        LG.act.wbopen = function (t) { var w = P.byId[t.dataset.id]; LG.modal(entryCard(w) + '<div class="modal__actions"><button class="btn soft" data-act="closemodal">Schließen</button></div>'); };
         LG.$('#wbq', root).oninput = function () { limit = 120; draw(); };
         drawChips(); draw();
       } };

@@ -165,9 +165,10 @@
       mount: function (root) {
         var box = LG.$('#vres', root);
         LG.verifyCert(code).then(function (r) {
+          if (r && r.error === 'rate_limited') { box.innerHTML = '<p class="formerr">Zu viele Anfragen. Bitte warte eine Minute und versuche es erneut.</p>'; return; }
           if (!r || !r.ok) { box.innerHTML = '<p class="formerr">✘ Ungültig: Dieser Zertifikatscode existiert nicht.</p><p class="muted">Prüfe, ob du den Code richtig eingegeben oder den QR-Code vollständig gescannt hast.</p>'; return; }
           var d = describe(r.kind, r.n);
-          box.innerHTML = '<p style="color:var(--primary);font-weight:800;font-size:20px">✔ Echtes Zertifikat</p><p>Inhaber:in: <b>' + esc(r.name) + '</b></p><p>' + esc(d.head) + ': ' + esc(d.title) + '</p><p>Ergebnis: <b>' + r.score + ' %</b></p><p>Datum: ' + esc(LG.fmtDate(r.achieved)) + '</p><p class="muted">Zertifikats-ID: ' + esc(r.code) + '</p>';
+          box.innerHTML = '<p style="color:var(--primary);font-weight:800;font-size:20px">✔ Echtes Zertifikat</p><p>Inhaber:in: <b>' + esc(r.name) + '</b></p><p>' + esc(d.head) + ': ' + esc(d.title) + '</p><p>Ergebnis: <b>' + (Number(r.score) || 0) + ' %</b></p><p>Datum: ' + esc(LG.fmtDate(r.achieved)) + '</p><p class="muted">Zertifikats-ID: ' + esc(r.code) + '</p>';
         }).catch(function () { box.innerHTML = '<p class="formerr">Keine Verbindung zum Prüfdienst. Bitte versuche es später noch einmal.</p>'; });
       } };
   };

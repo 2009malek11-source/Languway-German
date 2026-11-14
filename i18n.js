@@ -4,8 +4,7 @@
   var LG = window.LG, esc = LG.esc, ic = LG.ic;
   var AR1 = window.LGAR1 || { w: {}, p: {} }, AR2 = window.LGAR2 || { lv: [], gr: [], ui: {} };
   var LANGS = [['de', 'Deutsch', 'DE'], ['en', 'English', 'EN'], ['ar', 'العربية', 'ع']];
-  function lsGet(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
-  function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  var lsGet = LG.lsGet, lsSet = LG.lsSet;
 
   /* ---------- state ---------- */
   LG.lang = function () { var l = LG.settings.ui; return l === 'en' || l === 'ar' ? l : 'de'; };
@@ -125,7 +124,6 @@
     ['Sonnen', 'Brille', 'Sonnenbrille', 'sunglasses (sun + glasses)', 'نظارة شمسية (شمس + نظارة)'], ['Wasser', 'Flasche', 'Wasserflasche', 'water bottle', 'زجاجة ماء (ماء + زجاجة)'],
     ['Staub', 'Sauger', 'Staubsauger', 'vacuum cleaner (dust + sucker)', 'مكنسة كهربائية (غبار + ماصّ)'], ['Kinder', 'Garten', 'Kindergarten', 'kindergarten (children + garden)', 'روضة أطفال (أطفال + حديقة)'],
     ['Auto', 'Bahn', 'Autobahn', 'motorway (car + track)', 'طريق سريع (سيارة + طريق)'], ['Reise', 'Büro', 'Reisebüro', 'travel agency (travel + office)', 'وكالة سفر (سفر + مكتب)']];
-  function ensureCompStyle() { }
   LG.cmpHtml = function (lemma, display) {
     var p = COMP[lemma]; if (!p) return null;
     return '<span class="cmp"><span class="cp1">' + esc(p[0]) + '</span><span class="cp2">' + esc(lemma.slice(p[0].length)) + '</span></span>';
@@ -206,7 +204,6 @@
         };
       } });
   };
-  LG.skipOnboarding = function () { lsSet(onbKey(), true); };
 
   /* ---------- init ---------- */
   LG.i18nInit = function () { patchWords(); applyDir(); startObs(); buildMap(); langAsk(); trTree(document.body); };

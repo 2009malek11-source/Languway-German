@@ -63,6 +63,7 @@
   };
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { var m = document.getElementById('modal'); if (m && !m.hidden) LG.closeModal(); } });
   LG.closeModal = function () { var m = LG.$('#modal'); m.hidden = true; m.innerHTML = ''; };
+  LG.act.closemodal = function () { LG.closeModal(); };
   LG.confirm = function (title, msg, ok, danger) {
     return new Promise(function (res) {
       LG.modal('<h3>' + LG.esc(title) + '</h3><p class="muted">' + LG.esc(msg) + '</p><div class="modal__actions"><button class="btn soft" data-r="0">Abbrechen</button><button class="btn ' + (danger ? 'danger' : '') + '" data-r="1">' + LG.esc(ok || 'OK') + '</button></div>',
@@ -99,15 +100,8 @@
   function utf8(str) { return new TextEncoder().encode(str); }
   function hex(u8) { return Array.prototype.map.call(u8, function (b) { return ('0' + b.toString(16)).slice(-2); }).join(''); }
   LG.sha256hex = function (str) { return hex(sha256(utf8(str))); };
-  LG.hmac = function (key, msg) {
-    var k = utf8(key); if (k.length > 64) k = sha256(k); var ip = new Uint8Array(64 + 0), op = new Uint8Array(64), i;
-    for (i = 0; i < 64; i++) { var kb = k[i] || 0; ip[i] = kb ^ 0x36; op[i] = kb ^ 0x5c; }
-    var m = utf8(msg), inner = new Uint8Array(64 + m.length); inner.set(ip); inner.set(m, 64); var ih = sha256(inner);
-    var outer = new Uint8Array(96); outer.set(op); outer.set(ih, 64); return sha256(outer);
-  };
-  LG.randHex = function (n) { var a = new Uint8Array(n); (window.crypto || window.msCrypto).getRandomValues(a); return hex(a); };
   /* ---------- messages (account screens are in English) ---------- */
-  var MSG = { bad_credentials: 'Incorrect username or password.', username_taken: 'This username is already taken. Please choose another one.', invalid_name: 'Please enter your name (up to 60 characters).', invalid_username: 'Username: 3–20 characters, letters a–z, digits, "_", "-" or ".".', invalid_password: 'The password must be 8–72 characters long.', locked: 'Too many wrong attempts. Please wait a few minutes and try again.', busy: 'Too many new accounts right now. Please try again later.', network: 'No internet connection. Please check your connection and try again.', session: 'Your session has expired. Please log in again.', server_error: 'Something went wrong. Please try again.' };
+  var MSG = { bad_credentials: 'Incorrect username or password.', username_taken: 'This username is already taken. Please choose another one.', invalid_name: 'Please enter your name (up to 60 characters).', invalid_username: 'Username: 3–20 characters, letters a–z, digits, "_", "-" or ".".', invalid_password: 'The password must be 8–72 characters long.', locked: 'Too many wrong attempts. Please wait a few minutes and try again.', busy: 'Too many new accounts right now. Please try again later.', weak_password: 'This password is too easy to guess. Please choose a less common one that does not contain your username.', rate_limited: 'Too many requests from your connection. Please wait a minute and try again.', network: 'No internet connection. Please check your connection and try again.', session: 'Your session has expired. Please log in again.', server_error: 'Something went wrong. Please try again.' };
   LG.errText = function (code) { return MSG[code] || MSG.server_error; };
 
   /* ---------- progress: local storage (no server) ---------- */
@@ -189,7 +183,6 @@
   LG.logout = function () {
     var t = token(); return LG.flush(true).then(function () { if (t) LG.rpc('german_logout', { p_token: t }, true).catch(function () {}); LG.clearLocal(); LG.go('/'); });
   };
-  LG.forceLogout = function () { LG.clearLocal(); LG.go('/auth/login'); };
   LG.deleteAccount = function (pw) {
     return LG.rpc('german_delete_account', { p_token: token(), p_pass: pw }).then(function (r) { ok(r); var u = LG.S.user.username; lsDel('lg.pg.' + u); lsDel('lg.certs.' + u); lsDel(KEY.lastUser); LG.clearLocal(); });
   };
