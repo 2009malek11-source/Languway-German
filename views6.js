@@ -2,8 +2,8 @@
 (function () {
   'use strict';
   var LG = window.LG, C = LG.C, esc = LG.esc, ic = LG.ic, S = LG.settings;
-  Object.keys({ goal: 50, notif: false, notifTime: '18:00', nDue: true, nStreak: true, nGoal: true, fontSize: 'm', calm: false, lastNotif: '' }).forEach(function (k) {
-    var d = { goal: 50, notif: false, notifTime: '18:00', nDue: true, nStreak: true, nGoal: true, fontSize: 'm', calm: false, lastNotif: '' }; if (S[k] === undefined) S[k] = d[k];
+  Object.keys({ goal: 50, notif: false, notifTime: '18:00', nDue: true, nStreak: true, nGoal: true, fontSize: 'm', calm: false, lastNotif: '', sfx: true, autoNext: false, autoSpeak: true }).forEach(function (k) {
+    var d = { goal: 50, notif: false, notifTime: '18:00', nDue: true, nStreak: true, nGoal: true, fontSize: 'm', calm: false, lastNotif: '', sfx: true, autoNext: false, autoSpeak: true }; if (S[k] === undefined) S[k] = d[k];
   });
   function applyLook() {
     var h = document.documentElement; h.style.fontSize = { s: '15px', m: '', l: '18px' }[S.fontSize] || ''; h.classList.toggle('calm', !!S.calm);
@@ -71,7 +71,7 @@
       '<p class="muted" style="font-size:13px">Nach der Installation startet die App wie eine normale App, auch ohne Internet (außer für den KI-Tutor).</p></div>';
     var html =
       '<p class="muted" style="margin-bottom:12px">Tippe auf einen Bereich, um ihn zu öffnen.</p>' +
-      sec('lang', 'globe', 'Sprache · Language · اللغة', 'Oberfläche und Hilfssprache', LG.langSettings(), open === 'lang') +
+      sec('lang', 'globe', 'Sprache · Language · اللغة', 'Oberfläche und Hilfssprache', LG.langSettings(), open === 'lang' || !open) +
       sec('look', 'sun', 'Darstellung', 'Tag/Nacht, Schriftgröße, Animationen',
         '<div class="setrow"><div><b>Tag- und Nachtmodus</b><div class="muted" style="font-size:13px">Wird auf diesem Gerät gespeichert.</div></div><button class="dn" data-act="theme" aria-label="Tag- und Nachtmodus wechseln"><span class="stars"></span><span class="cloud"></span><span class="knob"></span></button></div>' +
         '<div class="setrow"><label for="s-fs"><b>Schriftgröße</b></label><select id="s-fs"><option value="s">Klein</option><option value="m">Normal</option><option value="l">Groß</option></select></div>' +
@@ -82,6 +82,9 @@
         '<div class="setrow"><span></span><button class="btn sm soft" id="s-test">' + ic('speaker') + ' Stimme testen</button></div>', open === 'audio') +
       sec('learn', 'target', 'Lernen', 'Tagesziel und Hinweise',
         '<div class="setrow"><label for="s-goal"><b>Tagesziel</b><div class="muted" style="font-size:13px">Wie viele XP willst du pro Tag sammeln?</div></label><select id="s-goal"><option value="20">20 XP – leicht</option><option value="50">50 XP – normal</option><option value="100">100 XP – intensiv</option><option value="200">200 XP – Profi</option></select></div>' +
+        sw('s-sfx', 'Töne bei Antworten', 'Kurzer Ton bei richtig und falsch.', S.sfx) +
+        sw('s-anext', 'Automatisch weiter', 'Nach einer richtigen Antwort geht es von selbst weiter.', S.autoNext) +
+        sw('s-aspk', 'Falsche Wörter vorlesen', 'Das richtige Wort wird nach einem Fehler vorgelesen.', S.autoSpeak) +
         sw('s-rem', 'Hinweise beim Öffnen', 'Zeigt beim Start, wenn Wörter fällig sind oder die nächste Lektion wartet.', S.reminders), open === 'learn') +
       sec('notif', 'bell', 'Benachrichtigungen', 'Erinnerungen auf deinem Gerät',
         '<p class="muted" style="font-size:14px">Status: <b id="s-nst">' + notifState + '</b></p>' +
@@ -115,6 +118,7 @@
     // only one section open at a time
     LG.$$('details.acc', root).forEach(function (d) { d.addEventListener('toggle', function () { if (d.open) LG.$$('details.acc', root).forEach(function (o) { if (o !== d) o.open = false; }); }); });
     var fs = LG.$('#s-fs', root); fs.value = S.fontSize; fs.onchange = function () { LG.setSetting('fontSize', fs.value); applyLook(); };
+    bindSwitch(root, 's-sfx', 'sfx'); bindSwitch(root, 's-anext', 'autoNext'); bindSwitch(root, 's-aspk', 'autoSpeak');
     bindSwitch(root, 's-calm', 'calm', 'Animationen reduziert.', 'Animationen an.', applyLook);
     var rate = LG.$('#s-rate', root), rv = LG.$('#s-ratev', root), sel = LG.$('#s-voice', root), vn = LG.$('#s-voicen', root);
     function lab() { rv.textContent = 'Aktuell: ' + Number(LG.settings.rate).toFixed(2) + '×'; } lab();

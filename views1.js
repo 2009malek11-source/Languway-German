@@ -174,7 +174,7 @@
   LG.spBtn = sp;
 
   function wordCard(w) {
-    var h = '<div class="card wcard"><div><h3>' + (w.type === 'n' ? '<span class="art ' + w.article + '">' + w.article + '</span>' + (LG.cmpHtml(w.lemma) || esc(w.lemma)) : esc(w.lemma)) + '</h3></div><div>' + sp(w.type === 'n' ? w.display : w.lemma) + '</div>';
+    var h = '<div class="card wcard">' + LG.picBlock(w) + '<div><h3>' + (w.type === 'n' ? '<span class="art ' + w.article + '">' + w.article + '</span>' + (LG.cmpHtml(w.lemma) || esc(w.lemma)) : esc(w.lemma)) + '</h3></div><div>' + sp(w.type === 'n' ? w.display : w.lemma) + '</div>';
     var meta = [];
     if (w.type === 'n') meta.push('Plural: ' + (w.plural === '-' ? 'kein Plural' : 'die ' + esc(w.plural)));
     if (w.type === 'a' && w.comp !== '-') meta.push(esc(w.lemma) + ' – ' + esc(w.comp) + ' – ' + esc(w.sup));

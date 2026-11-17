@@ -116,7 +116,7 @@
     var today = LG.today(), done = LG.pg.dailyDone && LG.pg.dailyDone[today];
     return { title: 'Spiel', heading: 'Tagesaufgabe und Spiele', html:
       '<div class="grid c2"><div class="card" id="gbox"><h3>' + ic('target') + ' Tagesaufgabe</h3><p class="muted">8 gemischte Fragen aus deinem Wortschatz. ' + (done ? 'Heute schon erledigt – du kannst trotzdem üben.' : 'Bonus: +25 XP einmal pro Tag.') + '</p><button class="btn" data-act="gdaily">' + (done ? 'Noch einmal üben' : 'Tagesaufgabe starten') + '</button></div>' +
-      '<div class="card"><h3>' + ic('star') + ' Memory</h3><p class="muted">Finde die Paare: deutsches Wort und englische Bedeutung. +15 XP pro Spiel.</p><button class="btn" data-act="gmem">Memory spielen</button></div></div><div id="garea" style="margin-top:16px"></div>',
+      '<div class="card"><h3>' + ic('star') + ' Memory</h3><p class="muted">Finde die Paare: deutsches Wort und englische Bedeutung. +15 XP pro Spiel.</p><button class="btn" data-act="gmem">Memory spielen</button></div>' + LG.picGameCard() + '</div><div id="garea" style="margin-top:16px"></div>' + LG.picMapHtml(),
       mount: function () {
         var area = LG.$('#garea');
         LG.act.gdaily = function () {

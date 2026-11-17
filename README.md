@@ -31,3 +31,6 @@ settings in accordion sections (appearance, speech, learning, notifications, AI 
 - Oberfläche: Deutsch, English, العربية (RTL). Erklärsprache (Bedeutungen + Grammatik-Hilfe): ar, en, fr, es, tr, ru, fa, ur, zh, hi, id – automatisch aus Muttersprache und weiteren Sprachen gewählt (`i18n.js`, `lang-*.js`).
 - Neue Erklärsprache: Datei `lang-xx.js` nach dem Muster von `lang-fr.js` anlegen, Code in `HELPERS` (`i18n.js`) und `SHELL` (`sw.js`) eintragen.
 - Die Übersetzungen sind maschinell erstellt und nicht muttersprachlich geprüft.
+
+## Bilder beim Lernen
+visual.js: lokale Bilder (Emoji) zu 112 konkreten Wörtern, Einstellung (Bedeutung+Bild / nur Bedeutung / nur Bild), Spiel „Wort erraten“, Bilder-Karte. Keine externen Dienste, keine API-Schlüssel.

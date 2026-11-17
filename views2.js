@@ -48,6 +48,9 @@
       fb.innerHTML = '<div class="feedback ' + (ok ? 'ok' : 'no') + '">' + (ok ? 'Richtig!' : (ans === undefined ? 'Die richtige Antwort:' : 'Leider falsch. Richtig ist:') + ' <b>' + esc(correctText(q)) + '</b>') + (q.exp ? '<div style="font-weight:500;margin-top:6px">' + esc(q.exp) + '</div>' : '') + '</div>' + (ok ? '' : '<div style="margin-top:10px"><button class="btn sm soft" id="qwhy">Warum falsch? / Why wrong?</button><div id="qwhybox"></div></div>') + '<div style="margin-top:12px"><button class="btn" id="qnext">' + (i + 1 < qs.length ? 'Weiter ›' : 'Ergebnis ansehen') + '</button></div>';
       var wb = LG.$('#qwhy', root); if (wb) wb.onclick = function () { wb.hidden = true; LG.explainWrong(q, ans, LG.$('#qwhybox', root)); };
       var nb = LG.$('#qnext', root); nb.focus(); nb.onclick = next;
+      if (LG.sfx) LG.sfx(ok);
+      if (ok && LG.settings.autoNext && i + 1 < qs.length) { var at = i; setTimeout(function () { if (i === at && document.body.contains(nb)) next(); }, 1300); }
+      if (!ok && LG.settings.autoSpeak && q.wid) { var sw_ = LG.P.byId[q.wid]; if (sw_) LG.speak(sw_.type === 'n' ? sw_.display : sw_.lemma); }
       LG.$$('[data-qa=check],[data-qa=skip]', root).forEach(function (b) { b.hidden = true; });
     }
     function next() { i++; if (i < qs.length) draw(); else done(); }
