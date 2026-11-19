@@ -129,9 +129,6 @@ svg.i { width: 1.25em; height: 1.25em; fill: none; stroke: currentColor; stroke-
 @media (max-width: 640px) { .liquid-nav a span { display: none; } .liquid-nav a.on span { display: inline; } }
 .liquid-nav a.on { background: rgba(22, 134, 91, .2); color: var(--dark); box-shadow: inset 0 0 0 1px var(--glass-border), 0 8px 18px -10px rgba(16, 42, 32, .5), inset 0 1px 0 rgba(255, 255, 255, .6); }
 html[data-theme="dark"] .liquid-nav a.on { background: rgba(255, 255, 255, .14); color: #fff; }
-.nav-sep { width: 1px; height: 26px; background: var(--glass-border); margin: 0 4px; flex: none; }
-.nav-theme { position: relative; z-index: 6; width: 42px; height: 42px; border-radius: 50%; border: 0; background: transparent; color: var(--text); display: grid; place-items: center; cursor: pointer; transition: background .3s; } .nav-theme:hover { background: rgba(255, 255, 255, .25); } .nav-theme .i { width: 20px; height: 20px; }
-.nav-theme .i-sun { display: none; } html[data-theme="dark"] .nav-theme .i-sun { display: grid; } html[data-theme="dark"] .nav-theme .i-moon { display: none; }
 /* day / night toggle */
 .dn { position: relative; width: 76px; height: 38px; border-radius: 99px; border: 0; padding: 0; overflow: hidden; background: linear-gradient(#58a6e6, #8fd2f7); box-shadow: inset 0 3px 8px rgba(0, 0, 0, .3), 0 4px 10px -4px rgba(0, 0, 0, .35); transition: background .5s; flex: none; }
 .dn .knob { position: absolute; top: 4px; left: 4px; width: 30px; height: 30px; border-radius: 50%; background: #f5cf34; box-shadow: 0 2px 6px rgba(0, 0, 0, .4), inset -3px -3px 5px rgba(213, 150, 0, .6); transition: transform .5s cubic-bezier(.5, 1.4, .5, 1), background .5s; z-index: 3; }
@@ -222,3 +219,5 @@ pre, code, blockquote, kbd { border-radius: 10px; } table { border-radius: 14px;
 img[src="logo-mark.png"] { box-sizing: border-box; border-radius: 50%; background: #fff; padding: 3px; object-fit: contain; }
 img[src="logo-round.png"] { border-radius: 50%; box-shadow: 0 24px 40px -14px rgba(13, 96, 66, .45); object-fit: cover; }
 .menu-item.on { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .25); }
+.topbar .tag, .topbar .dn { flex: none; white-space: nowrap; }
+@media (max-width: 700px) { .topbar { gap: 8px; } .topbar .tag { font-size: 11px; padding: 2px 8px; } .liquid-nav { gap: 2px; padding: 6px; } .liquid-nav a { padding: 10px 14px; } }

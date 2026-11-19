@@ -34,3 +34,5 @@ settings in accordion sections (appearance, speech, learning, notifications, AI 
 
 ## Bilder beim Lernen
 visual.js: lokale Bilder (Emoji) zu 112 konkreten Wörtern, Einstellung (Bedeutung+Bild / nur Bedeutung / nur Bild), Spiel „Wort erraten“, Bilder-Karte. Keine externen Dienste, keine API-Schlüssel.
+
+Bilder: echte Fotos von Wikipedia/Wikimedia Commons (freie Lizenzen), nachgeladen und lokal zwischengespeichert; ohne Internet erscheint ein Symbol. CSP erlaubt dafür en.wikipedia.org und upload.wikimedia.org.
