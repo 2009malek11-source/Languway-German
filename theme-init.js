@@ -6,7 +6,7 @@
   try {
     var t = localStorage.getItem('lg.theme');
     if (t) t = JSON.parse(t);
-    if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    if (!t) t = 'dark';
     document.documentElement.setAttribute('data-theme', t);
   } catch (e) {}
 })();

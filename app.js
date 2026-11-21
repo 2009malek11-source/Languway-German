@@ -49,7 +49,7 @@
     bulb: '<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10c1 1 1 2 1 3h6c0-1 0-2 1-3a6 6 0 0 0-4-10z"/>',
     target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
     clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',
-    chat: '<path d="M4 5h16v11H9l-5 4z"/>', stop: '<rect x="7" y="7" width="10" height="10" rx="2" fill="currentColor"/>'
+    chat: '<path d="M4 5h16v11H9l-5 4z"/>', trophy: '<path d="M8 4h8v6a4 4 0 0 1-8 0zM8 6H4v2a4 4 0 0 0 4 4M16 6h4v2a4 4 0 0 1-4 4M12 14v4M8 21h8"/>', cap: '<path d="m2 9 10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/>', calendar: '<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>', help: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 1-1 1.7M12 17v.1"/>', pad: '<rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 10v5M4.5 12.5h5M15 11h.1M18 14h.1"/>', spark: '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/>', logout: '<path d="M9 4H5v16h4M16 8l4 4-4 4M20 12H9"/>', clipboard: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9zM9 13l2 2 4-4"/>', trend: '<path d="M3 17l6-6 4 4 8-9"/><path d="M15 6h6v6"/>', info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.1"/>', back: '<path d="M15 5l-7 7 7 7"/>', forward: '<path d="M9 5l7 7-7 7"/>', mail: '<rect x="3" y="5" width="18" height="14" rx="3"/><path d="m3 7 9 6 9-6"/>', key: '<circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M16 7l3 3"/>', palette: '<path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 1.5-2s0-2 1.5-2h2a4 4 0 0 0 4-4c0-5-4.5-10-9-10z"/><path d="M7.5 11h.1M10 7.5h.1M15 8h.1"/>', accessibility: '<circle cx="12" cy="4.5" r="2"/><path d="M4 8l8 1.5L20 8M12 9.5V15l-3 6M12 15l3 6"/>', sound: '<path d="M4 9v6h4l5 4V5L8 9z"/>', data: '<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>', image: '<rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="m4 18 5-5 4 4 3-3 4 4"/>', warn: '<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.1"/>', stop: '<rect x="7" y="7" width="10" height="10" rx="2" fill="currentColor"/>'
   };
   LG.ic = function (n, cls) { return '<svg class="i ' + (cls || '') + '" viewBox="0 0 24 24" aria-hidden="true">' + (ICON[n] || '') + '</svg>'; };
 
@@ -314,8 +314,8 @@
   /* ---------- router + shell ---------- */
   var ROUTES = [
     [/^\/$/, 'home'], [/^\/auth\/(login|signup)$/, 'auth'], [/^\/verify\/([A-Za-z0-9_.~-]+)$/, 'verify'], [/^\/placement$/, 'placement'], [/^\/welcome$/, 'welcome'],
-    [/^\/levels$/, 'levels'], [/^\/level\/(\d+)$/, 'lesson'], [/^\/test\/(\d+)$/, 'levelTest'], [/^\/exam\/([1-7]|final)$/, 'stageExam'],
-    [/^\/translator$/, 'translator'], [/^\/wordbook$/, 'wordbook'], [/^\/review$/, 'review'], [/^\/profile$/, 'profile'], [/^\/settings$/, 'settings'], [/^\/certificates$/, 'certificates'], [/^\/certificate\/([A-Za-z0-9]+)$/, 'certificate'], [/^\/tutor$/, 'tutor'], [/^\/game$/, 'game']
+    [/^\/levels$/, 'levels'], [/^\/progress$/, 'progress'], [/^\/tests$/, 'tests'], [/^\/help$/, 'help'], [/^\/level\/(\d+)\/words\/([a-z]+)$/, 'lessonWords'], [/^\/level\/(\d+)$/, 'lesson'], [/^\/test\/(\d+)$/, 'levelTest'], [/^\/exam\/([1-7]|final)$/, 'stageExam'],
+    [/^\/translator$/, 'translator'], [/^\/wordbook$/, 'wordbook'], [/^\/review$/, 'review'], [/^\/profile$/, 'profile'], [/^\/settings(?:\/([a-z]+))?$/, 'settings'], [/^\/certificates$/, 'certificates'], [/^\/certificate\/([A-Za-z0-9]+)$/, 'certificate'], [/^\/tutor$/, 'tutor'], [/^\/game$/, 'game']
   ];
   var PUBLIC = { home: 1, auth: 1, verify: 1 };
   LG.curRoute = null;
@@ -328,40 +328,57 @@
     if (!logged && !PUBLIC[name]) return LG.go('/auth/login');
     if (logged && name === 'auth') return LG.go('/');
     if (logged && name === 'home' && LG.onboarded && !LG.onboarded()) return LG.go('/welcome');
-    var NEEDS_LEVEL = { levels: 1, lesson: 1, levelTest: 1, stageExam: 1, review: 1, game: 1 };
+    var NEEDS_LEVEL = { levels: 1, lessonWords: 1, tests: 1, progress: 1, lesson: 1, levelTest: 1, stageExam: 1, review: 1, game: 1 };
     if (logged && !LG.pg.placementDone && NEEDS_LEVEL[name]) return LG.go('/placement');
     LG.curRoute = { name: name, params: params, path: path, q: new URLSearchParams(q) };
     var v = LG.views[name]; if (!v) return;
     Promise.resolve(v(params, LG.curRoute.q)).then(function (view) { if (!view || LG.curRoute.path !== path) return; LG.render(view, name); window.scrollTo(0, 0); });
   };
-  var NAV = [['/', 'home', 'Start'], ['/levels', 'book', 'Lernen'], ['/translator', 'globe', 'Übersetzer'], ['/wordbook', 'list', 'Wörter'], ['/review', 'refresh', 'Wiederholen'], ['/game', 'target', 'Spiel'], ['/tutor', 'bulb', 'KI-Tutor'], ['/certificates', 'award', 'Zertifikate'], ['/profile', 'user', 'Profil'], ['/settings', 'settings', 'Einstellungen']];
-  var BOTTOM = [['/', 'home', 'Start'], ['/levels', 'book', 'Lernen'], ['/translator', 'globe', 'Übersetzer'], ['/wordbook', 'list', 'Wörter'], ['/profile', 'user', 'Profil']];
-  function isOn(p, cur) { return p === '/' ? cur === '/' : cur.indexOf(p) === 0 || (p === '/levels' && /^\/(level|test|exam)\b/.test(cur)); }
+  /* sidebar (desktop / tablet) and bottom bar (phone) */
+  var NAV = [['/', 'home', 'Start'], ['/progress', 'trend', 'Mein Fortschritt'], ['/levels', 'book', 'Lektionen'], ['/translator', 'globe', 'Übersetzer'], ['/wordbook', 'list', 'Wörterbuch'], ['/review', 'refresh', 'Wiederholen'], ['/tests', 'clipboard', 'Prüfungen'], ['/game', 'pad', 'Spiele'], ['/tutor', 'spark', 'KI-Tutor'], ['/settings', 'settings', 'Einstellungen'], ['/help', 'help', 'Hilfe']];
+  var BOTTOM = [['/', 'home', 'Start'], ['/levels', 'cap', 'Lernen'], ['/progress', 'chart', 'Fortschritt'], ['/profile', 'user', 'Profil']];
+  function isOn(p, cur) { return p === '/' ? cur === '/' : cur.indexOf(p) === 0 || (p === '/levels' && /^\/(level|test|exam)\b/.test(cur)) || (p === '/tests' && /^\/(test|exam)\b/.test(cur)) || (p === '/settings' && /^\/help\b/.test(cur) === false && cur.indexOf('/settings') === 0); }
+  LG.notifs = function () {
+    var out = [], d = LG.dueWords().length, n = C.currentLevel(LG.pg), st = LG.streak ? LG.streak() : 0;
+    if (!LG.pg.placementDone) out.push(['target', 'Einstufungstest', 'Starte den kurzen Test, damit wir dein Niveau finden.', '/placement']);
+    if (d) out.push(['refresh', d + ' Wörter zur Wiederholung', 'Kurz wiederholen, damit du sie nicht vergisst.', '/review']);
+    if (LG.pg.placementDone && LG.passedCount() < 30) out.push(['book', 'Nächste Lektion bereit', 'Stufe ' + n + ' – ' + LG.lvTitle(n), '/level/' + n]);
+    var nx = LG.nextExam && LG.nextExam(); if (nx && LG.stageLevelsDone && LG.pg.placementDone) { var si = LG.STAGES ? LG.STAGES.map(function (x) { return x[0]; }).indexOf(nx) : -1; if (si > -1 && LG.stageLevelsDone(si)) out.push(['award', 'Abschlussprüfung freigeschaltet', 'Du kannst jetzt die Prüfung ' + nx + ' ablegen.', '/exam/' + nx]); }
+    if (st >= 2) out.push(['flame', st + ' Tage in Folge', 'Weiter so – lerne heute, um deine Serie zu halten.', '/levels']);
+    LG.achList.filter(function (a) { return LG.pg.ach[a.id]; }).slice(-2).forEach(function (a) { out.push(['trophy', 'Erfolg: ' + a.title, a.desc, '/progress']); });
+    return out;
+  };
   LG.render = function (view, name) {
     var root = LG.$('#root'); document.title = (view.title ? view.title + ' – ' : '') + 'Languway German';
     if (view.bare || !LG.S.user) { root.innerHTML = view.html; if (view.mount) view.mount(root); return; }
-    var cur = LG.curRoute.path, collapsed = lsGet(KEY.panel, false), u = LG.S.user, ini = LG.esc((u.name || '?').trim().charAt(0).toUpperCase());
-    var due = LG.dueWords().length;
-    var SEP = { '/review': 1, '/tutor': 1, '/settings': 1 };
-    var items = NAV.map(function (n) { return (SEP[n[0]] ? '<div class="divider"></div>' : '') + '<a class="menu-item' + (isOn(n[0], cur) ? ' on' : '') + '" href="#' + n[0] + '" title="' + n[2] + '">' + LG.ic(n[1]) + '<span>' + n[2] + '</span>' + (n[0] === '/review' && due ? '<b class="badge">' + due + '</b>' : '') + '</a>'; }).join('');
+    var cur = LG.curRoute.path, u = LG.S.user, ini = LG.esc((u.name || '?').trim().charAt(0).toUpperCase()), due = LG.dueWords().length, nn = LG.notifs().length;
+    var items = NAV.map(function (n) { return (n[0] === '/settings' ? '<div class="sb__sep"></div>' : '') + '<a class="sb__it' + (isOn(n[0], cur) ? ' on' : '') + '" href="#' + n[0] + '" title="' + n[2] + '">' + LG.ic(n[1]) + '<span>' + n[2] + '</span>' + (n[0] === '/review' && due ? '<b class="badge">' + due + '</b>' : '') + '</a>'; }).join('');
+    var home = cur === '/';
     root.innerHTML =
-      '<div class="shell"><aside class="panel' + (collapsed ? ' collapsed' : '') + '" id="panel"><div class="header"><h2><img src="logo-mark.png" alt=""><span>Menü</span></h2><button class="close" data-act="panelx" aria-label="Menü ein- oder ausklappen">' + LG.ic(collapsed ? 'menu' : 'x') + '</button></div>' +
-      '<form class="search-box" id="psearch" role="search">' + LG.ic('search') + '<input type="search" placeholder="Wort suchen …" aria-label="Wort suchen"></form><div class="divider"></div>' + items +
-      '<div class="grow"></div><div class="divider"></div><a class="me menu-item" href="#/profile" style="padding:10px"><span class="avatar">' + ini + '</span><div><b>' + LG.esc(u.name) + '</b><small>@' + LG.esc(u.username) + '</small></div></a></aside><div class="panel-scrim" data-act="panelx"></div>' +
-      '<main class="main" id="main"><header class="topbar"><button class="iconbtn menu" data-act="panelopen" aria-label="Menü öffnen">' + LG.ic('menu') + '</button><h1>' + LG.esc(view.heading || view.title || '') + '</h1><span id="syncdot" class="tag"></span>' +
-      '<button class="dn" data-act="theme" aria-label="Tag- und Nachtmodus wechseln"><span class="stars"></span><span class="cloud"></span><span class="knob"></span></button></header>' + view.html + '</main></div>' +
-      '<nav class="liquid-nav" aria-label="Hauptnavigation"><div class="liquid-glare-container"><span class="liquid-glare"></span></div>' + BOTTOM.map(function (n) { return '<a href="#' + n[0] + '" class="' + (isOn(n[0], cur) ? 'on' : '') + '" aria-label="' + n[2] + '">' + LG.ic(n[1]) + '<span>' + n[2] + '</span></a>'; }).join('') + '</nav>';
+      '<div class="app"><aside class="sb" id="sb"><a class="sb__brand" href="#/"><img src="logo-round.png" alt="" width="64" height="64"><span><b>Languway</b><i>German</i></span></a>' +
+      '<nav class="sb__nav" aria-label="Hauptnavigation">' + items + '</nav><div class="sb__foot"><button type="button" class="mode" data-act="theme" aria-label="Tag- und Nachtmodus wechseln"><span class="mode__s">' + LG.ic('sun') + '</span><span class="mode__m">' + LG.ic('moon') + '</span><i class="mode__k"></i></button>' + LG.art.skyline() + '</div></aside>' +
+      '<div class="stage"><header class="tb"><a class="tb__brand" href="#/"><img src="logo-round.png" alt="" width="40" height="40"><span><b>Languway</b><i>German</i></span></a>' +
+      '<form class="tb__search" id="psearch" role="search">' + LG.ic('search') + '<input type="search" placeholder="Wort oder Lektion suchen …" aria-label="Wort oder Lektion suchen"></form>' +
+      '<span id="syncdot" class="tag"></span><button type="button" class="tb__ic" data-act="bell" aria-label="Benachrichtigungen">' + LG.ic('bell') + (nn ? '<b class="dot">' + nn + '</b>' : '') + '</button>' +
+      '<button type="button" class="tb__ic tb__mode" data-act="theme" aria-label="Tag- und Nachtmodus wechseln">' + LG.ic('moon') + '</button><a class="tb__ic tb__gear" href="#/settings" aria-label="Einstellungen">' + LG.ic('settings') + '</a>' +
+      '<button type="button" class="tb__me" data-act="usermenu" aria-label="Benutzermenü"><span class="avatar">' + ini + '</span>' + LG.ic('chevron') + '</button></header>' +
+      '<main class="main" id="main">' + (home || view.noHead ? '' : '<div class="ph">' + (view.back ? '<a class="ph__back" href="#' + view.back + '" aria-label="Zurück">' + LG.ic('back') + '</a>' : '') + '<h1>' + LG.esc(view.heading || view.title || '') + '</h1></div>') + view.html + '</main></div>' +
+      '<nav class="bn" aria-label="Hauptnavigation">' + BOTTOM.map(function (n) { return '<a href="#' + n[0] + '" class="' + (isOn(n[0], cur) ? 'on' : '') + '" aria-label="' + n[2] + '">' + LG.ic(n[1]) + '<span>' + n[2] + '</span></a>'; }).join('') + '</nav></div>';
     LG.setSync('saved');
-    var ps = LG.$('#psearch'); ps.onsubmit = function (e) { e.preventDefault(); var v = ps.querySelector('input').value.trim(); LG.$('#panel').classList.remove('open'); LG.go('/wordbook?q=' + encodeURIComponent(v)); };
-    if (collapsed) LG.$('#psearch').addEventListener('click', function () { if (LG.$('#panel').classList.contains('collapsed')) { LG.$('#panel').classList.remove('collapsed'); lsSet(KEY.panel, false); ps.querySelector('input').focus(); } });
-    LG.$$('#panel a').forEach(function (a) { a.addEventListener('click', function () { LG.$('#panel').classList.remove('open'); }); });
+    var ps = LG.$('#psearch'); ps.onsubmit = function (e) { e.preventDefault(); var v = ps.querySelector('input').value.trim(); LG.go('/wordbook?q=' + encodeURIComponent(v)); };
     if (view.mount) view.mount(LG.$('#main'));
   };
   document.addEventListener('click', function (e) {
     var t = e.target.closest('[data-act]'); if (!t) return; var f = LG.act[t.dataset.act]; if (f) f(t, e);
   });
-  LG.act.panelx = function () { var p = LG.$('#panel'); if (matchMedia('(max-width:900px)').matches) p.classList.remove('open'); else { var c = !p.classList.contains('collapsed'); p.classList.toggle('collapsed', c); lsSet(KEY.panel, c); var cb = p.querySelector('.close'); if (cb) cb.innerHTML = LG.ic(c ? 'menu' : 'x'); } };
-  LG.act.panelopen = function () { LG.$('#panel').classList.add('open'); };
+  LG.act.bell = function () {
+    var l = LG.notifs();
+    LG.modal('<h3>Benachrichtigungen</h3>' + (l.length ? '<div class="nlist">' + l.map(function (n) { return '<a class="nitem" href="#' + n[3] + '" data-act="closemodal"><span class="nic">' + LG.ic(n[0]) + '</span><span><b>' + LG.esc(n[1]) + '</b><small>' + LG.esc(n[2]) + '</small></span></a>'; }).join('') + '</div>' : '<p class="muted">Keine neuen Benachrichtigungen. Du bist auf dem neuesten Stand.</p>') + '<div class="modal__actions"><button class="btn soft" data-act="closemodal">Schließen</button></div>');
+  };
+  LG.act.usermenu = function () {
+    var u = LG.S.user;
+    LG.modal('<div class="umenu"><div class="umenu__me"><span class="avatar lg">' + LG.esc((u.name || '?').trim().charAt(0).toUpperCase()) + '</span><div><b>' + LG.esc(u.name) + '</b><small>@' + LG.esc(u.username) + '</small></div></div><a class="umenu__it" href="#/profile" data-act="closemodal">' + LG.ic('user') + ' Profil</a><a class="umenu__it" href="#/settings" data-act="closemodal">' + LG.ic('settings') + ' Einstellungen</a><a class="umenu__it" href="#/help" data-act="closemodal">' + LG.ic('help') + ' Hilfe und Funktionen</a><button class="umenu__it" data-act="logout">' + LG.ic('logout') + ' Abmelden</button></div>');
+  };
   LG.act.theme = function () { LG.theme(LG.theme() === 'dark' ? 'light' : 'dark'); };
   LG.act.speak = function (t) { LG.speak(t.dataset.say, { rate: LG.settings.rate }); };
   LG.act.slow = function (t) { LG.speak(t.dataset.say, { rate: 0.6 }); };

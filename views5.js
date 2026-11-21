@@ -94,7 +94,7 @@
   };
   LG.goalCard = function () {
     var t = LG.today(), xp = (LG.pg.todayXP || {})[t] || 0, goal = LG.settings.goal || 50, p = Math.min(100, Math.round(xp / goal * 100)), s = LG.streak();
-    return '<div class="grid c3" style="margin-top:16px"><div class="card stat"><b>' + s + '</b><span>Tage in Folge</span></div><div class="card stat"><b>' + (LG.pg.xp || 0) + '</b><span>XP gesamt</span></div><div class="card"><b>Tagesziel</b><div class="bar" style="margin:8px 0 4px"><i style="width:' + p + '%"></i></div><small class="muted">' + xp + ' / ' + goal + ' XP' + (p >= 100 ? ' ✔' : '') + '</small></div></div>';
+    return '<div class="grid c3" style="margin-top:16px"><div class="card stat"><b>' + s + '</b><span>Tage in Folge</span></div><div class="card stat"><b>' + (LG.pg.xp || 0) + '</b><span>XP gesamt</span></div><div class="card"><b>Tagesziel</b><div class="bar" style="margin:8px 0 4px"><i style="width:' + p + '%"></i></div><small class="muted">' + xp + ' / ' + goal + ' XP' + (p >= 100 ? ' ' + ic('check') : '') + '</small></div></div>';
   };
   LG.startCard = function () {
     return '<a class="cta" href="#/placement" style="text-decoration:none"><ul><li>Einstufungstest</li><li><b>Finde dein Niveau</b> · 30 Fragen</li></ul></a>' +

@@ -32,10 +32,37 @@
     return null;
   }
 
+
+  /* ---------- explanation of a word in the learner's helper language (en / ar) ---------- */
+  var EX = {
+    en: { g: 'Grammar', gender: { der: 'masculine (der)', die: 'feminine (die)', das: 'neuter (das)' }, gl: 'Gender', pl: 'Plural', nopl: 'no plural (uncountable)', cases: 'Cases', nom: 'Nominative (subject)', akk: 'Accusative (direct object)', dat: 'Dative (indirect object)', gen: 'Genitive (possession)', tipN: 'Always learn the noun together with its article: the gender cannot be guessed reliably, and the article changes in every case. Nouns are always written with a capital letter.',
+      weak: 'Regular (weak) verb: the past form ends in -te and the participle in -t.', strong: 'Irregular (strong) verb: the vowel changes and the participle usually ends in -en. Learn the three forms together.', aux: 'Perfect tense uses', tenses: 'Tenses', pres: 'Present', presU: 'now, habits and general facts', pret: 'Simple past', pretU: 'written stories and reports; common with sein, haben and modal verbs', perf: 'Perfect', perfU: 'spoken past: things that happened (use the helper verb + participle at the end of the sentence)', inf: 'Infinitive', comp: 'Comparison', compU: 'Positive – comparative (more) – superlative (most). Before a noun the adjective takes an ending that depends on the article and the case.', other: 'Word type', otherU: 'This word does not change its form. Learn it inside a sentence.', ex: 'Example' },
+    ar: { g: 'القواعد', gender: { der: 'مذكر (der)', die: 'مؤنث (die)', das: 'محايد (das)' }, gl: 'الجنس', pl: 'الجمع', nopl: 'لا جمع له (غير معدود)', cases: 'الحالات الإعرابية', nom: 'الفاعل (Nominativ)', akk: 'المفعول به المباشر (Akkusativ)', dat: 'المفعول به غير المباشر (Dativ)', gen: 'الملكية (Genitiv)', tipN: 'احفظ الاسم دائماً مع أداته: لا يمكن تخمين الجنس بدقة، وتتغير الأداة في كل حالة. وتُكتب الأسماء بحرف كبير دائماً.',
+      weak: 'فعل منتظم (ضعيف): يُصاغ الماضي بإضافة te- والتصريف الثالث بإضافة t-.', strong: 'فعل شاذ (قوي): يتغير حرف العلة، وينتهي التصريف الثالث غالباً بـ en-. احفظ الأشكال الثلاثة معاً.', aux: 'الفعل المساعد في الماضي التام', tenses: 'الأزمنة', pres: 'المضارع (Präsens)', presU: 'الآن، العادات، الحقائق العامة', pret: 'الماضي البسيط (Präteritum)', pretU: 'الكتابة والقصص والتقارير، ويكثر مع sein وhaben والأفعال الناقصة', perf: 'الماضي التام (Perfekt)', perfU: 'الماضي في الكلام اليومي: الفعل المساعد + التصريف الثالث في آخر الجملة', inf: 'المصدر', comp: 'التفضيل', compU: 'الدرجة العادية – المقارنة (أكثر) – التفضيل (الأكثر). قبل الاسم تُضاف نهاية للصفة حسب الأداة والحالة.', other: 'نوع الكلمة', otherU: 'هذه الكلمة لا تتغير. تعلّمها داخل جملة.', ex: 'مثال' }
+  };
+  var DECL = { der: ['der', 'den', 'dem', 'des'], die: ['die', 'die', 'der', 'der'], das: ['das', 'das', 'dem', 'des'] };
+  function explain(w) {
+    var L = LG.helper() === 'ar' ? 'ar' : 'en', T = EX[L], h = '<div class="expl" dir="' + (L === 'ar' ? 'rtl' : 'ltr') + '"><h4>' + ic('book') + ' ' + T.g + '</h4>';
+    if (w.type === 'n') {
+      var d = DECL[w.article] || DECL.der;
+      h += '<p>' + T.gl + ': <b>' + T.gender[w.article] + '</b> · ' + T.pl + ': <b>' + (w.plural === '-' ? T.nopl : 'die ' + esc(w.plural)) + '</b></p>';
+      h += '<div class="decl"><div><span>' + T.nom + '</span><b dir="ltr">' + d[0] + ' ' + esc(w.lemma) + '</b></div><div><span>' + T.akk + '</span><b dir="ltr">' + d[1] + ' ' + esc(w.lemma) + '</b></div><div><span>' + T.dat + '</span><b dir="ltr">' + d[2] + ' ' + esc(w.lemma) + '</b></div><div><span>' + T.gen + '</span><b dir="ltr">' + d[3] + ' ' + esc(w.lemma) + (w.article === 'die' ? '' : '(e)s') + '</b></div></div><p class="muted">' + T.tipN + '</p>';
+    } else if (w.type === 'v') {
+      var c = C.conjugate(w), weak = /te$/.test(w.pret.split(',')[0].trim());
+      h += '<p>' + (weak ? T.weak : T.strong) + '</p><p>' + T.aux + ': <b dir="ltr">' + c.aux + '</b></p>';
+      h += '<div class="decl"><div><span>' + T.pres + ' · ' + T.presU + '</span><b dir="ltr">er ' + esc(c.pres[2]) + '</b></div><div><span>' + T.pret + ' · ' + T.pretU + '</span><b dir="ltr">er ' + esc(c.pret[2]) + '</b></div><div><span>' + T.perf + ' · ' + T.perfU + '</span><b dir="ltr">er ' + esc(c.perf[2]) + '</b></div></div>';
+    } else if (w.type === 'a') {
+      h += '<p>' + (w.comp !== '-' ? '<b dir="ltr">' + esc(w.lemma) + ' – ' + esc(w.comp) + ' – ' + esc(w.sup) + '</b><br>' : '') + T.compU + '</p>';
+    } else h += '<p>' + T.other + ': <b>' + esc(w.pos || '') + '</b>. ' + T.otherU + '</p>';
+    return h + '</div>';
+  }
+  LG.explainWord = explain;
+
   function entryCard(w) {
     var saved = LG.pg.words.indexOf(w.id) > -1 || LG.pg.words.some(function (id) { return P.byId[id] && P.byId[id].lemma === w.lemma && P.byId[id].type === w.type; });
     var typeName = { n: 'Nomen', v: 'Verb', a: 'Adjektiv', o: w.pos || 'Wort' }[w.type];
     var h = '<div class="card entry"><div class="row between"><h3>' + (w.type === 'n' ? '<span class="art ' + w.article + '">' + w.article + '</span>' + esc(w.lemma) : esc(w.lemma)) + '</h3><div class="row">' + LG.spBtn(w.display) + '</div></div>';
+    if (w.type === 'n') h += LG.picBig(w, w.lemma);
     h += '<span class="tag">' + typeName + '</span>' + (w.level ? ' <span class="tag">Stufe ' + w.level + ' · ' + D.LEVELS[w.level - 1].c + '</span>' : '');
     h += '<div class="defs"><div><b>Englisch:</b> ' + esc(w.en) + '</div><div><b>Definition (Deutsch):</b> ' + esc(w.defDE) + '</div><div><b>Definition (English):</b> ' + esc(w.defEN) + '</div>';
     if (w.type === 'n') h += '<div><b>Artikel:</b> ' + w.article + ' · <b>Plural:</b> ' + (w.plural === '-' ? 'kein Plural' : 'die ' + esc(w.plural)) + '</div>';
@@ -43,6 +70,7 @@
     if (w.type === 'v') { var c = C.conjugate(w); h += '<div><b>Infinitiv:</b> ' + esc(w.lemma) + ' · <b>Partizip II:</b> ' + esc(c.pp) + ' · <b>Hilfsverb:</b> ' + c.aux + '</div>'; }
     h += '<div><b>Beispiel:</b> ' + esc(w.ex) + ' ' + LG.spBtn(w.ex, 'Satz anhören') + '</div></div>';
     if (w.type === 'v') h += LG.conjTable(w).replace('<details class="more">', '<details class="more" open>');
+    h += explain(w);
     h += '<div class="row" style="margin-top:12px"><button class="btn sm ' + (saved ? 'soft' : '') + '" data-act="save" data-id="' + w.id + '">' + ic(saved ? 'check' : 'star') + (saved ? ' Gemerkt' : ' Merken') + '</button></div></div>';
     return h;
   }
@@ -56,7 +84,7 @@
   /* ---------- translator ---------- */
   LG.views.translator = function () {
     var count = LG.uniqWords().length;
-    return { title: 'Übersetzer', heading: 'Übersetzer Deutsch ⇄ Englisch', html:
+    return { title: 'Übersetzer', heading: 'Übersetzer', html:
       '<div class="tr-wrap"><div class="dirbar"><div class="lang" id="l1">Deutsch</div><button class="iconbtn" id="swap" aria-label="Richtung wechseln">' + ic('swap') + '</button><div class="lang" id="l2">Englisch</div></div>' +
       '<div class="sbar" style="max-width:none"><input id="trin" type="search" placeholder=" " autocomplete="off" autocapitalize="none" spellcheck="false"><label for="trin" id="trlabel">Wort oder Satz eingeben</label><button class="go" id="trgo" aria-label="Übersetzen">' + ic('search') + '</button></div>' +
       '<div class="note">Das Wörterbuch arbeitet vollständig in der App (ohne externe Dienste) und enthält ' + count + ' Wörter und ' + D.PHRASES.length + ' Redewendungen mit Artikeln, Plural, Definitionen in beiden Sprachen und Verbformen. Für ganze Sätze ohne Eintrag zeigt dir der Übersetzer die Bedeutung jedes Wortes.</div><div id="trout"></div></div>',

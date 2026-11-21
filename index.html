@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="de" dir="ltr" data-theme="light">
+<html lang="de" dir="ltr" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://upload.wikimedia.org; media-src 'self' blob: data:; font-src 'self'; connect-src 'self' https://en.wikipedia.org https://fsuwmmtierimmuoxmhrx.supabase.co https://api.anthropic.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Languway German – Deutsch lernen von A1 bis C2</title>
 <meta name="description" content="Languway German: Deutsch lernen mit 30 Stufen von A1 bis C2 – Lesen, Schreiben, Grammatik, Wortschatz, Hören und Sprechen. Teil der Languway-Serie.">
-<meta name="theme-color" content="#16865B">
+<meta name="theme-color" content="#070D2B">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -20,16 +20,22 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="stylesheet" href="app.css">
 <link rel="stylesheet" href="views.css">
+<link rel="stylesheet" href="theme.css">
 <script src="theme-init.js"></script>
 </head>
 <body>
 <div id="bg" aria-hidden="true"><span class="blob blob-a"></span><span class="blob blob-b"></span></div>
 
 <div id="splash" role="status" aria-label="Languway German wird geladen">
-  <div class="splash__mark"><img src="logo-mark.png" alt="" width="120" height="120"></div>
-  <h1 class="splash__title">LANGUWAY GERMAN</h1>
-  <p class="splash__sub">Part of the Languway Series</p>
-  <div class="splash__bar"><i></i></div>
+  <span class="sp-aurora a"></span><span class="sp-aurora b"></span><span class="sp-stars"></span>
+  <div class="sp-core">
+    <span class="sp-ring r1"></span><span class="sp-ring r2"></span><span class="sp-ring r3"></span>
+    <div class="sp-logo"><img src="logo-round.png" alt="" width="150" height="150"></div>
+  </div>
+  <h1 class="sp-title" aria-label="Languway German"><span>L</span><span>a</span><span>n</span><span>g</span><span>u</span><span>w</span><span>a</span><span>y</span></h1>
+  <p class="sp-sub">German</p>
+  <p class="sp-tag">Part of the Languway Series</p>
+  <span class="sp-flag"><i></i><i></i><i></i></span>
 </div>
 
 <div id="root"></div>
@@ -45,7 +51,9 @@
 <script src="ar3.js"></script>
 <script src="ar4.js"></script>
 <script src="ar5.js"></script>
+<script src="ar6.js"></script>
 <script src="app.js"></script>
+<script src="art.js"></script>
 <script src="i18n.js"></script>
 <script src="views1.js"></script>
 <script src="views2.js"></script>
@@ -54,6 +62,10 @@
 <script src="views5.js"></script>
 <script src="views6.js"></script>
 <script src="visual.js"></script>
+<script src="home.js"></script>
+<script src="learn.js"></script>
+<script src="settings2.js"></script>
+<script src="profile2.js"></script>
 <script src="boot.js"></script>
 </body>
 </html>

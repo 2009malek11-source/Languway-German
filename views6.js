@@ -50,8 +50,10 @@
   function shareText() { return 'Languway German – Deutsch lernen von Pre-A1 bis C2, kostenlos: ' + siteUrl(); }
 
   /* ---------- accordion section helper ---------- */
-  function sec(id, icon, title, sub, body, open) {
-    return '<details class="acc" id="acc-' + id + '"' + (open ? ' open' : '') + '><summary><span class="acc__ic">' + ic(icon) + '</span><span class="acc__t"><b>' + title + '</b><small>' + sub + '</small></span><span class="acc__ch">' + ic('chevron') + '</span></summary><div class="acc__b">' + body + '</div></details>';
+  var curSec = '', cards = [];
+  function sec(id, icon, title, sub, body) {
+    cards.push('<a class="scard" href="#/settings/' + id + '"><span class="scard__ic">' + ic(icon) + '</span><span class="scard__t"><b>' + title + '</b><small>' + sub + '</small></span>' + ic('forward') + '</a>');
+    return '<section class="spage" id="acc-' + id + '" data-title="' + esc(title) + '"' + (curSec === id ? '' : ' hidden') + '>' + body + '</section>';
   }
   function sw(id, label, desc, on) {
     return '<div class="setrow"><div><b>' + label + '</b>' + (desc ? '<div class="muted" style="font-size:13px">' + desc + '</div>' : '') + '</div><button class="switchbtn' + (on ? ' on' : '') + '" id="' + id + '" role="switch" aria-checked="' + !!on + '" aria-label="' + esc(label) + '"></button></div>';
@@ -62,30 +64,29 @@
   }
 
   LG.views.settings = function (params, q) {
-    var u = LG.S.user, open = (q && q.get('open')) || '';
-    var notifState = !LG.notifSupported() ? 'Dein Browser unterstützt keine Benachrichtigungen.' : Notification.permission === 'granted' ? 'Erlaubt ✔' : Notification.permission === 'denied' ? 'Blockiert – erlaube sie in den Browser-Einstellungen der Seite.' : 'Noch nicht erlaubt';
+    var u = LG.S.user; curSec = (params && params[0]) || (q && q.get('open')) || ''; cards = [];
+    var notifState = !LG.notifSupported() ? 'Dein Browser unterstützt keine Benachrichtigungen.' : Notification.permission === 'granted' ? 'Erlaubt' : Notification.permission === 'denied' ? 'Blockiert – erlaube sie in den Browser-Einstellungen der Seite.' : 'Noch nicht erlaubt';
     var how =
       '<div class="how"><h4>Android (Chrome)</h4><ol><li>Öffne die Seite in Chrome.</li><li>Tippe auf „App installieren“ oben – oder auf ⋮ → „App installieren“ / „Zum Startbildschirm“.</li><li>Bestätige. Das Symbol erscheint auf deinem Startbildschirm.</li></ol>' +
       '<h4>iPhone / iPad (Safari)</h4><ol><li>Öffne die Seite in <b>Safari</b> (nicht in einem anderen Browser).</li><li>Tippe auf „Teilen“ (Quadrat mit Pfeil nach oben).</li><li>Wähle „Zum Home-Bildschirm“ und dann „Hinzufügen“.</li></ol>' +
       '<h4>Computer (Chrome / Edge)</h4><ol><li>Klicke in der Adressleiste auf das Installations-Symbol (Monitor mit Pfeil) – oder auf „App installieren“ oben.</li><li>Bestätige mit „Installieren“. Die App öffnet sich in einem eigenen Fenster.</li></ol>' +
       '<p class="muted" style="font-size:13px">Nach der Installation startet die App wie eine normale App, auch ohne Internet (außer für den KI-Tutor).</p></div>';
     var html =
-      '<p class="muted" style="margin-bottom:12px">Tippe auf einen Bereich, um ihn zu öffnen.</p>' +
-      sec('lang', 'globe', 'Sprache · Language · اللغة', 'Oberfläche und Hilfssprache', LG.langSettings(), open === 'lang' || !open) +
+      sec('lang', 'globe', 'Sprache · Language · اللغة', 'Oberfläche und Hilfssprache', LG.langSettings()) +
       sec('look', 'sun', 'Darstellung', 'Tag/Nacht, Schriftgröße, Animationen',
-        '<div class="setrow"><div><b>Tag- und Nachtmodus</b><div class="muted" style="font-size:13px">Wird auf diesem Gerät gespeichert.</div></div><button class="dn" data-act="theme" aria-label="Tag- und Nachtmodus wechseln"><span class="stars"></span><span class="cloud"></span><span class="knob"></span></button></div>' +
+        '<div class="setrow"><div><b>Tag- und Nachtmodus</b><div class="muted" style="font-size:13px">Wird auf diesem Gerät gespeichert.</div></div><button class="btn sm soft" data-act="theme">' + ic('moon') + ' Wechseln</button></div>' +
         '<div class="setrow"><label for="s-fs"><b>Schriftgröße</b></label><select id="s-fs"><option value="s">Klein</option><option value="m">Normal</option><option value="l">Groß</option></select></div>' +
-        sw('s-calm', 'Weniger Animationen', 'Schaltet Konfetti und Bewegungen aus.', S.calm), open === 'look') +
+        sw('s-calm', 'Weniger Animationen', 'Schaltet Konfetti und Bewegungen aus.', S.calm)) +
       sec('audio', 'speaker', 'Sprache und Hören', 'Geschwindigkeit und Stimme',
         '<div class="setrow"><label for="s-rate"><b>Sprechgeschwindigkeit</b><div class="muted" style="font-size:13px" id="s-ratev"></div></label><input type="range" id="s-rate" min="0.5" max="1.2" step="0.05" value="' + S.rate + '"></div>' +
         '<div class="setrow"><label for="s-voice"><b>Deutsche Stimme</b><div class="muted" style="font-size:13px" id="s-voicen"></div></label><select id="s-voice"></select></div>' +
-        '<div class="setrow"><span></span><button class="btn sm soft" id="s-test">' + ic('speaker') + ' Stimme testen</button></div>', open === 'audio') +
+        '<div class="setrow"><span></span><button class="btn sm soft" id="s-test">' + ic('speaker') + ' Stimme testen</button></div>') +
       sec('learn', 'target', 'Lernen', 'Tagesziel und Hinweise',
         '<div class="setrow"><label for="s-goal"><b>Tagesziel</b><div class="muted" style="font-size:13px">Wie viele XP willst du pro Tag sammeln?</div></label><select id="s-goal"><option value="20">20 XP – leicht</option><option value="50">50 XP – normal</option><option value="100">100 XP – intensiv</option><option value="200">200 XP – Profi</option></select></div>' +
         sw('s-sfx', 'Töne bei Antworten', 'Kurzer Ton bei richtig und falsch.', S.sfx) +
         sw('s-anext', 'Automatisch weiter', 'Nach einer richtigen Antwort geht es von selbst weiter.', S.autoNext) +
         sw('s-aspk', 'Falsche Wörter vorlesen', 'Das richtige Wort wird nach einem Fehler vorgelesen.', S.autoSpeak) +
-        sw('s-rem', 'Hinweise beim Öffnen', 'Zeigt beim Start, wenn Wörter fällig sind oder die nächste Lektion wartet.', S.reminders), open === 'learn') +
+        sw('s-rem', 'Hinweise beim Öffnen', 'Zeigt beim Start, wenn Wörter fällig sind oder die nächste Lektion wartet.', S.reminders)) +
       sec('notif', 'bell', 'Benachrichtigungen', 'Erinnerungen auf deinem Gerät',
         '<p class="muted" style="font-size:14px">Status: <b id="s-nst">' + notifState + '</b></p>' +
         '<div class="setrow"><span></span><button class="btn sm" id="s-nperm">Benachrichtigungen erlauben</button></div>' +
@@ -95,28 +96,29 @@
         sw('s-nstreak', 'Serie retten', 'Warnt, wenn deine Tagesserie endet.', S.nStreak) +
         sw('s-ngoal', 'Tagesziel', 'Erinnert an dein Tagesziel.', S.nGoal) +
         '<div class="setrow"><span></span><button class="btn sm soft" id="s-ntest">Test-Nachricht senden</button></div>' +
-        '<p class="note">Ehrlicher Hinweis: Ohne Server kann die App keine Nachrichten senden, wenn sie komplett geschlossen ist. Erinnerungen kommen, solange die App oder der Browser-Tab im Hintergrund geöffnet ist (installiert ist das am zuverlässigsten).</p>', open === 'notif') +
+        '<p class="note">Ehrlicher Hinweis: Ohne Server kann die App keine Nachrichten senden, wenn sie komplett geschlossen ist. Erinnerungen kommen, solange die App oder der Browser-Tab im Hintergrund geöffnet ist (installiert ist das am zuverlässigsten).</p>') +
       sec('ai', 'bulb', 'KI-Tutor', 'Dein API-Schlüssel',
-        '<p class="muted" style="font-size:14px">Der Tutor erklärt Grammatik und Fehler auf Deutsch und Englisch. Er nutzt deinen eigenen Anthropic-API-Schlüssel (console.anthropic.com). Der Schlüssel wird nur auf diesem Gerät gespeichert und nur an api.anthropic.com gesendet. Ohne Schlüssel gibt es die eingebauten Erklärungen.</p><div class="setrow"><label for="s-key"><b>API-Schlüssel</b></label><input type="password" id="s-key" dir="ltr" placeholder="sk-ant-…" autocomplete="off" value="' + esc(S.apiKey || '') + '" style="flex:1;min-width:0"></div><div class="setrow"><span class="muted" id="s-keyst" style="font-size:13px"></span><button class="btn sm soft" id="s-keysave">Speichern</button></div>', open === 'ai') +
-      sec('install', 'download', 'App installieren', standalone() ? 'Schon installiert ✔' : 'Auf den Startbildschirm',
-        '<div class="setrow"><div><b>Als App installieren</b><div class="muted" style="font-size:13px">Eigenes Symbol, Vollbild und schneller Start.</div></div><button class="btn sm" id="s-install"' + (deferred && !standalone() ? '' : ' hidden') + '>' + ic('download') + ' Installieren</button></div>' + (standalone() ? '<p class="note">Du nutzt die App bereits im installierten Modus.</p>' : '') + how, open === 'install') +
+        '<p class="muted" style="font-size:14px">Der Tutor erklärt Grammatik und Fehler auf Deutsch und Englisch. Er nutzt deinen eigenen Anthropic-API-Schlüssel (console.anthropic.com). Der Schlüssel wird nur auf diesem Gerät gespeichert und nur an api.anthropic.com gesendet. Ohne Schlüssel gibt es die eingebauten Erklärungen.</p><div class="setrow"><label for="s-key"><b>API-Schlüssel</b></label><input type="password" id="s-key" dir="ltr" placeholder="sk-ant-…" autocomplete="off" value="' + esc(S.apiKey || '') + '" style="flex:1;min-width:0"></div><div class="setrow"><span class="muted" id="s-keyst" style="font-size:13px"></span><button class="btn sm soft" id="s-keysave">Speichern</button></div>') +
+      sec('install', 'download', 'App installieren', standalone() ? 'Schon installiert' : 'Auf den Startbildschirm',
+        '<div class="setrow"><div><b>Als App installieren</b><div class="muted" style="font-size:13px">Eigenes Symbol, Vollbild und schneller Start.</div></div><button class="btn sm" id="s-install"' + (deferred && !standalone() ? '' : ' hidden') + '>' + ic('download') + ' Installieren</button></div>' + (standalone() ? '<p class="note">Du nutzt die App bereits im installierten Modus.</p>' : '') + how) +
       sec('share', 'share', 'Teilen', 'Link, QR-Code und Nachrichten',
         '<p class="muted" style="font-size:14px">Empfiehl Languway German deinen Freunden.</p><div class="shareqr"><canvas id="s-qr" width="300" height="300" aria-label="QR-Code zur Website"></canvas></div>' +
         '<div class="row" style="flex-wrap:wrap;justify-content:center;margin-top:10px"><button class="btn sm" id="s-share">' + ic('share') + ' Teilen</button><button class="btn sm soft" id="s-copy">Link kopieren</button><button class="btn sm soft" id="s-qrdl">QR speichern</button></div>' +
-        '<div class="row" style="flex-wrap:wrap;justify-content:center;margin-top:8px"><a class="btn sm soft" target="_blank" rel="noopener" id="s-wa">WhatsApp</a><a class="btn sm soft" target="_blank" rel="noopener" id="s-tg">Telegram</a><a class="btn sm soft" id="s-mail">E-Mail</a></div>', open === 'share') +
+        '<div class="row" style="flex-wrap:wrap;justify-content:center;margin-top:8px"><a class="btn sm soft" target="_blank" rel="noopener" id="s-wa">WhatsApp</a><a class="btn sm soft" target="_blank" rel="noopener" id="s-tg">Telegram</a><a class="btn sm soft" id="s-mail">E-Mail</a></div>') +
       sec('acct', 'user', 'Konto', esc(u.name) + ' · @' + esc(u.username),
         '<div class="setrow"><div><b>' + esc(u.name) + '</b><div class="muted" style="font-size:13px">@' + esc(u.username) + '</div></div><button class="btn sm" data-act="logout">Abmelden</button></div>' +
         '<div class="setrow"><div><b>Passwort ändern</b></div><button class="btn sm soft" data-act="chpw">Ändern</button></div>' +
         '<div class="setrow"><div><b>Fortschritt zurücksetzen</b><div class="muted" style="font-size:13px">Beginnt den Kurs neu mit dem Einstufungstest. Bereits ausgestellte Zertifikate bleiben gültig.</div></div><button class="btn sm danger" data-act="resetpg">Zurücksetzen</button></div>' +
-        '<div class="setrow"><div><b>Konto löschen</b><div class="muted" style="font-size:13px">Löscht dein Konto und deinen gesamten Fortschritt endgültig.</div></div><button class="btn sm danger" data-act="delacc">Löschen</button></div>', open === 'acct') +
+        '<div class="setrow"><div><b>Konto löschen</b><div class="muted" style="font-size:13px">Löscht dein Konto und deinen gesamten Fortschritt endgültig.</div></div><button class="btn sm danger" data-act="delacc">Löschen</button></div>') +
       sec('about', 'info', 'Über die App', 'Version, Datenschutz, Hilfe',
-        '<p><b>Languway German</b> · Part of the Languway Series<br><span class="muted">Version 2.0 · 30 Stufen von Pre-A1 bis C2</span></p><p class="muted" style="font-size:14px">Datenschutz: Dein Konto und dein Fortschritt werden verschlüsselt übertragen und in deiner Languway-Datenbank gespeichert (Passwörter nur als Hash). Keine Werbung, kein Tracking. Nur wenn du den KI-Tutor mit deinem Schlüssel nutzt, wird deine Frage an Anthropic gesendet.</p><p class="muted" style="font-size:14px">Die Zertifikate sind Teilnahmezertifikate dieser Lern-App und kein offizieller Nachweis (Goethe, TestDaF, telc).</p>', open === 'about');
-    return { title: 'Einstellungen', heading: 'Einstellungen', html: '<div class="accs">' + html + '</div>', mount: mount };
+        '<p><b>Languway German</b> · Part of the Languway Series<br><span class="muted">Version 2.0 · 30 Stufen von Pre-A1 bis C2</span></p><p class="muted" style="font-size:14px">Datenschutz: Dein Konto und dein Fortschritt werden verschlüsselt übertragen und in deiner Languway-Datenbank gespeichert (Passwörter nur als Hash). Keine Werbung, kein Tracking. Nur wenn du den KI-Tutor mit deinem Schlüssel nutzt, wird deine Frage an Anthropic gesendet.</p><p class="muted" style="font-size:14px">Die Zertifikate sind Teilnahmezertifikate dieser Lern-App und kein offizieller Nachweis (Goethe, TestDaF, telc).</p>');
+    var head = 'Einstellungen', m = html.match(new RegExp('id="acc-' + curSec + '" data-title="([^"]*)"'));
+    if (curSec && m) head = m[1].replace(/&amp;/g, '&');
+    var grid = curSec && m ? '' : '<p class="muted">Wähle einen Bereich. Jeder Bereich öffnet sich auf einer eigenen Seite.</p><div class="scards">' + cards.join('') + '<a class="scard" href="#/help"><span class="scard__ic">' + ic('help') + '</span><span class="scard__t"><b>Funktionen und Anleitung</b><small>Alle Funktionen ausführlich erklärt</small></span>' + ic('forward') + '</a></div>';
+    return { title: 'Einstellungen', heading: head, back: curSec && m ? '/settings' : '', html: grid + html, mount: mount };
   };
 
   function mount(root) {
-    // only one section open at a time
-    LG.$$('details.acc', root).forEach(function (d) { d.addEventListener('toggle', function () { if (d.open) LG.$$('details.acc', root).forEach(function (o) { if (o !== d) o.open = false; }); }); });
     var fs = LG.$('#s-fs', root); fs.value = S.fontSize; fs.onchange = function () { LG.setSetting('fontSize', fs.value); applyLook(); };
     bindSwitch(root, 's-sfx', 'sfx'); bindSwitch(root, 's-anext', 'autoNext'); bindSwitch(root, 's-aspk', 'autoSpeak');
     bindSwitch(root, 's-calm', 'calm', 'Animationen reduziert.', 'Animationen an.', applyLook);
@@ -138,9 +140,9 @@
     var nst = LG.$('#s-nst', root);
     LG.$('#s-nperm', root).onclick = function () {
       if (!LG.notifSupported()) return LG.toast('Dieser Browser unterstützt keine Benachrichtigungen.', true);
-      Notification.requestPermission().then(function (p) { nst.textContent = p === 'granted' ? 'Erlaubt ✔' : p === 'denied' ? 'Blockiert – erlaube sie in den Browser-Einstellungen der Seite.' : 'Noch nicht erlaubt'; if (p === 'granted') { LG.setSetting('notif', true); LG.$('#s-notif', root).classList.add('on'); LG.toast('Benachrichtigungen erlaubt.'); } });
+      Notification.requestPermission().then(function (p) { nst.textContent = p === 'granted' ? 'Erlaubt' : p === 'denied' ? 'Blockiert – erlaube sie in den Browser-Einstellungen der Seite.' : 'Noch nicht erlaubt'; if (p === 'granted') { LG.setSetting('notif', true); LG.$('#s-notif', root).classList.add('on'); LG.toast('Benachrichtigungen erlaubt.'); } });
     };
-    bindSwitch(root, 's-notif', 'notif', 'Tägliche Erinnerung ist an.', 'Tägliche Erinnerung ist aus.', function (on) { if (on && LG.notifSupported() && Notification.permission === 'default') Notification.requestPermission().then(function (p) { nst.textContent = p === 'granted' ? 'Erlaubt ✔' : 'Noch nicht erlaubt'; }); });
+    bindSwitch(root, 's-notif', 'notif', 'Tägliche Erinnerung ist an.', 'Tägliche Erinnerung ist aus.', function (on) { if (on && LG.notifSupported() && Notification.permission === 'default') Notification.requestPermission().then(function (p) { nst.textContent = p === 'granted' ? 'Erlaubt' : 'Noch nicht erlaubt'; }); });
     LG.$('#s-ntime', root).onchange = function (e) { LG.setSetting('notifTime', e.target.value || '18:00'); LG.setSetting('lastNotif', ''); LG.toast('Uhrzeit gespeichert.'); };
     bindSwitch(root, 's-ndue', 'nDue'); bindSwitch(root, 's-nstreak', 'nStreak'); bindSwitch(root, 's-ngoal', 'nGoal');
     LG.$('#s-ntest', root).onclick = function () {

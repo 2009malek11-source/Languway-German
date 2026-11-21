@@ -66,7 +66,7 @@
   };
   function summary(res, title) {
     var wrong = res.qs.map(function (q, k) { return res.oks[k] ? '' : '<div class="review-item" data-wk="' + k + '"><b>' + esc(q.q) + '</b>Richtig: ' + esc(q.t === 'mcq' ? q.o[q.a] : q.t === 'order' ? q.ans : q.ans[0]) + (q.exp ? '<br><small class="muted">' + esc(q.exp) + '</small>' : '') + '</div>'; }).join('');
-    return '<div class="qbox result"><h2>' + esc(title || 'Ergebnis') + '</h2><div class="ring" style="--p:' + res.pct + '"><div>' + res.pct + ' %</div></div><p><b>' + res.correct + ' von ' + res.total + '</b> richtig</p>' + (wrong ? '<h3 style="text-align:left">Zum Wiederholen</h3>' + wrong : '<p>Fehlerfrei! 🎉</p>') + '<button class="btn" id="again">Noch einmal</button></div>';
+    return '<div class="qbox result"><h2>' + esc(title || 'Ergebnis') + '</h2><div class="ring" style="--p:' + res.pct + '"><div>' + res.pct + ' %</div></div><p><b>' + res.correct + ' von ' + res.total + '</b> richtig</p>' + (wrong ? '<h3 style="text-align:left">Zum Wiederholen</h3>' + wrong : '<p>Fehlerfrei!</p>') + '<button class="btn" id="again">Noch einmal</button></div>';
   }
 
   /* ---------- speaking practice ---------- */
