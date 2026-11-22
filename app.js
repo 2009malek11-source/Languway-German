@@ -356,7 +356,7 @@
     var home = cur === '/';
     root.innerHTML =
       '<div class="app"><aside class="sb" id="sb"><a class="sb__brand" href="#/"><img src="logo-round.png" alt="" width="64" height="64"><span><b>Languway</b><i>German</i></span></a>' +
-      '<nav class="sb__nav" aria-label="Hauptnavigation">' + items + '</nav><div class="sb__foot"><button type="button" class="mode" data-act="theme" aria-label="Tag- und Nachtmodus wechseln"><span class="mode__s">' + LG.ic('sun') + '</span><span class="mode__m">' + LG.ic('moon') + '</span><i class="mode__k"></i></button>' + LG.art.skyline() + '</div></aside>' +
+      '<nav class="sb__nav" aria-label="Hauptnavigation">' + items + '</nav><div class="sb__foot"><button type="button" class="mode" data-act="theme" aria-label="Tag- und Nachtmodus wechseln"><span class="mode__s">' + LG.ic('sun') + '</span><span class="mode__m">' + LG.ic('moon') + '</span><i class="mode__k"></i></button>' + '<img class="sb__sky" src="side.jpg" alt="" width="190" height="312">' + '</div></aside>' +
       '<div class="stage"><header class="tb"><a class="tb__brand" href="#/"><img src="logo-round.png" alt="" width="40" height="40"><span><b>Languway</b><i>German</i></span></a>' +
       '<form class="tb__search" id="psearch" role="search">' + LG.ic('search') + '<input type="search" placeholder="Wort oder Lektion suchen …" aria-label="Wort oder Lektion suchen"></form>' +
       '<span id="syncdot" class="tag"></span><button type="button" class="tb__ic" data-act="bell" aria-label="Benachrichtigungen">' + LG.ic('bell') + (nn ? '<b class="dot">' + nn + '</b>' : '') + '</button>' +

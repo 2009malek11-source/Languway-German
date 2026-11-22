@@ -24,7 +24,8 @@
         try { localStorage.setItem(SK, JSON.stringify(cache)); } catch (e) { /* storage blocked */ }
       }).catch(function () { /* offline: artwork stays */ }).then(function () { fetching = false; hydrate(); });
   }
-  function scenic(i, cls) { var t = SCENES[i % SCENES.length]; return '<div class="' + cls + '" data-scenic="' + esc(t) + '" role="img" aria-label="Foto: ' + esc(t) + '">' + (cls === 'lc__img' ? LG.art.skyline() : '') + '</div>'; }
+  var PH = ['scene1.jpg', 'scene2.jpg', 'scene3.jpg', 'scene4.jpg'];
+  function scenic(i, cls) { var u = cls === 'lc__img' ? PH[i % PH.length] : 'hero.jpg'; return '<div class="' + cls + ' has" role="img" aria-label="Foto" style="background-image:url(' + u + ')"></div>'; }
   window.addEventListener('load', function () {
     var r = LG.$('#root'); if (window.MutationObserver && r) { var b = false; new MutationObserver(function () { if (b) return; b = true; setTimeout(function () { b = false; hydrate(); }, 60); }).observe(r, { childList: true, subtree: true }); }
     setTimeout(function () { load(); hydrate(); }, 300);
@@ -57,7 +58,7 @@
     var ach = LG.achList.slice(0, 4).map(badge).join('');
     return {
       title: 'Start', noHead: true, html: !LG.pg.placementDone ? LG.startCard() :
-        '<section class="hero2"><div class="hero2__art">' + LG.art.sky() + scenic(0, 'hero2__photo') + LG.art.gate() + '</div><div class="hero2__txt"><h1 class="hello"><span>Hallo,</span> ' + esc(u.name.split(' ')[0]) + '!</h1><p class="hl">Lass uns gemeinsam <em>Deutsch</em> lernen!</p><p class="hs">Träume größer. Sprich besser. Entdecke neue Horizonte.</p><a class="gold" href="' + cta + '">' + ic('play') + (allDone ? 'Zur Prüfung' : 'Weiterlernen') + '</a></div></section>' +
+        '<section class="hero2"><div class="hero2__art">' + LG.art.sky() + scenic(0, 'hero2__photo') + '</div><div class="hero2__txt"><h1 class="hello"><span>Hallo,</span> ' + esc(u.name.split(' ')[0]) + '!</h1><p class="hl">Lass uns gemeinsam <em>Deutsch</em> lernen!</p><p class="hs">Träume größer. Sprich besser. Entdecke neue Horizonte.</p><a class="gold" href="' + cta + '">' + ic('play') + (allDone ? 'Zur Prüfung' : 'Weiterlernen') + '</a></div></section>' +
         '<section class="stats3"><a class="sc" href="#/progress">' + LG.art.ring(p) + '<div><small>Dein Fortschritt</small><b>Stufe ' + n + '</b><span>' + ic('trophy') + ' ' + (LG.pg.xp || 0) + ' Punkte</span></div>' + ic('forward') + '</a>' +
         '<a class="sc" href="' + cta + '"><span class="sc__ic">' + ic('calendar') + '</span><div><small>Nächste Lektion</small><b>' + LG.lessonLabel(cur) + '</b><span>' + ic('clock') + ' Heute · 10 Min.</span></div>' + ic('forward') + '</a>' +
         '<a class="sc" href="#/progress">' + LG.art.medal(lv.c) + '<div><small>Dein Niveau</small><b class="big">' + lv.c + '</b></div>' + ic('forward') + '</a></section>' +
@@ -79,7 +80,7 @@
     var feats = [['eye', 'Lesen', 'Texte für jede Stufe mit Verständnisfragen.'], ['pencil', 'Schreiben', 'Schreibaufgaben mit Hinweisen für sichere Sätze.'], ['bulb', 'Grammatik', 'Regeln Schritt für Schritt – mit Beispielen und Übungen.'], ['book', 'Wortschatz', 'Wörter mit Artikel, Plural, Foto und Beispielsatz.'], ['phones', 'Hören und Sprechen', 'Dialoge, Tempo wählen, nachsprechen.'], ['globe', 'Übersetzer', 'Erklärt jedes Wort: Bedeutung, Grammatik, Zeiten, Bild.']];
     var how = ['Konto erstellen – nur Name, Benutzername und Passwort.', 'Kurzen Einstufungstest machen oder bei null starten.', 'Stufe für Stufe lernen: Einheit → Lektion → Wörterbuch.', 'Mit Tests (75 %) freischalten, Zertifikate sammeln.'];
     return { title: 'Deutsch lernen von A1 bis C2', bare: true, html:
-      '<div class="land2"><section class="intro">' + LG.art.sky() + scenic(0, 'intro__photo') + '<div class="intro__shade"></div>' + LG.art.gate() +
+      '<div class="land2"><section class="intro">' + LG.art.sky() + scenic(0, 'intro__photo') + '<div class="intro__shade"></div>' +
       '<div class="intro__in"><div class="intro__logo"><span class="ring r1"></span><span class="ring r2"></span><img src="logo-round.png" alt="Languway German" width="132" height="132"></div>' +
       '<p class="intro__k">Languway German</p><h1 class="intro__h"><span>Hallo!</span> Lass uns gemeinsam <em>Deutsch</em> lernen!</h1><p class="intro__s">Träume größer. Sprich besser. Entdecke neue Horizonte – von A1 bis C2.</p>' +
       '<div class="row c"><a class="gold" href="#/auth/signup">' + ic('play') + 'Jetzt starten</a><a class="ghostbtn" href="#/auth/login">Anmelden</a></div><span class="intro__flag"><i></i><i></i><i></i></span></div></section>' +
